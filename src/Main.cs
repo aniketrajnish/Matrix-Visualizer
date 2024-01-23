@@ -18,8 +18,7 @@ namespace Matrix
         /// This class represents a matrix.
         /// It has a constructor and overrrides for various operators to support matrix operations.        
         /// </summary>
-        private float[,] data;
-
+        internal float[,] data;
         public Matrix(float[,] inputData)
         {
             /// <summary>
@@ -152,43 +151,7 @@ namespace Matrix
                     transposedData[i, j] = m.data[j, i]; // interchange the rows and columns of the matrix
 
             return new Matrix(transposedData);
-        }
-        public static Matrix HomogenizeVector(Matrix m)
-        {
-            /// <summary>
-            /// Homogenizes a given matrix.
-            /// </summary>
-            if (m.data == null || m.data.GetLength(0) != 1 || m.data.GetLength(1) == 0)
-                throw new ArgumentException("Invalid vector.");
-
-            
-            float[,] result = new float[m.data.GetLength(0), m.data.GetLength(1) + 1];
-
-            for (int i = 0; i < m.data.GetLength(1); i++)
-                result[0, i] = m.data[0, i];
-
-            result[0, m.data.GetLength(1)] = 1; // set the last element to 1
-
-            return new Matrix(result);
-        }
-        public static Matrix translationMatrix(float[] t)
-        {
-            /// <summary>
-            /// Creates a translation matrix from the given translation vector.
-            /// Can be used to translate a point of any dimension.
-            /// </summary>
-            if (t == null || t.Length == 0)
-                throw new ArgumentException("Invalid translation vector.");
-
-            int dimension = t.Length;
-
-            Matrix result = Matrix.identity(dimension + 1);
-
-            for (int i = 0; i < dimension; i++)
-                result.data[i, dimension] = t[i]; // set the last column to the translation vector
-
-            return result;
-        }
+        }    
         public Matrix TranslateMatrix(float[] t)
         {
             /// <summary>
@@ -199,28 +162,10 @@ namespace Matrix
             if (data.GetLength(0) != 1 || data.GetLength(1) != dimension)
                 throw new ArgumentException("The matrix must be a vector of same dimension as the translation vector.");
 
-            Matrix translationMatrix = Matrix.translationMatrix(t);
+            Matrix translationMatrix = MatrixHelpers.translationMatrix(t);
 
-            return HomogenizeVector(this) * ~translationMatrix;
-        }
-        public static Matrix scalingMatrix(float[] s)
-        {
-            /// <summary>
-            /// Creates a scaling matrix from the given scaling vector.
-            /// Can be used to scale a point of any dimension.
-            /// </summary>
-            if (s == null || s.Length == 0)
-                throw new ArgumentException("Invalid scaling vector.");
-
-            int dimension = s.Length;
-
-            Matrix result = Matrix.identity(dimension + 1);
-
-            for (int i = 0; i < dimension; i++)
-                result.data[i, i] = s[i]; // set the diagonal elements to the scaling vector
-
-            return result;
-        }
+            return MatrixHelpers.HomogenizeVector(this) * ~translationMatrix;
+        }        
         public Matrix ScaleMatrix(float[] s)
         {
             /// <summary>
@@ -231,23 +176,10 @@ namespace Matrix
             if (data.GetLength(0) != 1 || data.GetLength(1) != dimension)
                 throw new ArgumentException("The matrix must be a vector of same dimension as the scaling vector.");
 
-            Matrix scalingMatrix = Matrix.scalingMatrix(s);
+            Matrix scalingMatrix = MatrixHelpers.scalingMatrix(s);
 
-            return HomogenizeVector(this) * scalingMatrix;
-        }
-        /// <summary>
-        /// Methods to convert between degrees and radians.
-        /// </summary>
-        public static float deg2Rad(float angle) => (float)(Math.PI * angle / 180);
-        public static float rad2Deg(float angle) => (float)(angle * 180 / Math.PI);
-        /// <summary>
-        /// Creates a 2D rotation matrix.
-        /// This simply rotates about the axis perpendicular to the plane of the 2D space.
-        /// </summary>
-        public static Matrix rotation2D(float angle) => new Matrix(new float[,]
-        { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)) },
-        { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)) } });
-
+            return MatrixHelpers.HomogenizeVector(this) * scalingMatrix;
+        }    
         public Matrix Rotate2D(float angle)
         {
             /// <summary>
@@ -256,25 +188,10 @@ namespace Matrix
             if (data.GetLength(0) != 1 || data.GetLength(1) != 2)
                 throw new ArgumentException("The matrix must be a 2D vector for 2D rotation");
 
-            Matrix rotationMatrix = Matrix.rotation2D(angle);
+            Matrix rotationMatrix = MatrixHelpers.rotation2D(angle);
 
             return this * rotationMatrix;
         }
-        /// <summary>
-        /// The next three functions create 3D rotation matrices about the x, y and z axes respectively.
-        /// </summary>
-        public static Matrix rotation3Dx(float angle) => new Matrix(new float[,]
-        { { 1, 0, 0 },
-        { 0, (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)) },
-        { 0, (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)) } });
-        public static Matrix rotation3Dy(float angle) => new Matrix(new float[,]
-        { { (float)Math.Cos(deg2Rad(angle)), 0, (float)Math.Sin(deg2Rad(angle)) },
-        { 0, 1, 0 },
-        { -(float)Math.Sin(deg2Rad(angle)), 0, (float)Math.Cos(deg2Rad(angle)) } });
-        public static Matrix rotation3Dz(float angle) => new Matrix(new float[,]
-        { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)), 0 },
-        { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)), 0 },
-        { 0, 0, 1 } });
         public Matrix Rotate3D(float? rx = null, float? ry = null, float? rz = null)
         {
             /// <summary>
@@ -283,7 +200,7 @@ namespace Matrix
             if (data.GetLength(0) != 1 || data.GetLength(1) != 3)
                 throw new ArgumentException("The matrix must be a 3D vector for 3D rotation.");
 
-            Matrix rotationMatrix = Matrix.rotation3Dx(rx ?? 0) * Matrix.rotation3Dy(ry ?? 0) * Matrix.rotation3Dz(rz ?? 0); // the total rotation matrix is basically the product of the three rotation matrices
+            Matrix rotationMatrix = MatrixHelpers.rotation3Dx(rx ?? 0) * MatrixHelpers.rotation3Dy(ry ?? 0) * MatrixHelpers.rotation3Dz(rz ?? 0); // the total rotation matrix is basically the product of the three rotation matrices
 
             return this * rotationMatrix;
         }
@@ -344,7 +261,7 @@ namespace Matrix
             }
         }
     }
-    class MatrixHelpers
+    internal class MatrixHelpers
     {
         /// <summary>
         /// Helper class that contains some static functions to help the Matrix class.
@@ -364,11 +281,91 @@ namespace Matrix
             }
             return maxWidth;
         }
-
         /// <return>
         /// If the given 2D array of floats is a valid matrix.
         /// </return>
         public static bool IsValidMatrix(float[,] data) => !(data == null || data.GetLength(0) == 0 || data.GetLength(1) == 0);
+        /// <summary>
+        /// Methods to convert between degrees and radians.
+        /// </summary>
+        public static Matrix HomogenizeVector(Matrix m)
+        {
+            /// <summary>
+            /// Homogenizes a given matrix.
+            /// </summary>
+            if (m.data == null || m.data.GetLength(0) != 1 || m.data.GetLength(1) == 0)
+                throw new ArgumentException("Invalid vector.");
+
+
+            float[,] result = new float[m.data.GetLength(0), m.data.GetLength(1) + 1];
+
+            for (int i = 0; i < m.data.GetLength(1); i++)
+                result[0, i] = m.data[0, i];
+
+            result[0, m.data.GetLength(1)] = 1; // set the last element to 1
+
+            return new Matrix(result);
+        }
+        public static Matrix translationMatrix(float[] t)
+        {
+            /// <summary>
+            /// Creates a translation matrix from the given translation vector.
+            /// Can be used to translate a point of any dimension.
+            /// </summary>
+            if (t == null || t.Length == 0)
+                throw new ArgumentException("Invalid translation vector.");
+
+            int dimension = t.Length;
+
+            Matrix result = Matrix.identity(dimension + 1);
+
+            for (int i = 0; i < dimension; i++)
+                result.data[i, dimension] = t[i]; // set the last column to the translation vector
+
+            return result;
+        }
+        public static Matrix scalingMatrix(float[] s)
+        {
+            /// <summary>
+            /// Creates a scaling matrix from the given scaling vector.
+            /// Can be used to scale a point of any dimension.
+            /// </summary>
+            if (s == null || s.Length == 0)
+                throw new ArgumentException("Invalid scaling vector.");
+
+            int dimension = s.Length;
+
+            Matrix result = Matrix.identity(dimension + 1);
+
+            for (int i = 0; i < dimension; i++)
+                result.data[i, i] = s[i]; // set the diagonal elements to the scaling vector
+
+            return result;
+        }
+        public static float deg2Rad(float angle) => (float)(Math.PI * angle / 180);
+        public static float rad2Deg(float angle) => (float)(angle * 180 / Math.PI);
+        /// <summary>
+        /// Creates a 2D rotation matrix from the given angle.
+        /// Rotates the point along the axis perpendicular to the plane.
+        /// </summary>
+        public static Matrix rotation2D(float angle) => new Matrix(new float[,]
+        { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)) },
+        { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)) } });
+        /// <summary>
+        /// The next three functions create 3D rotation matrices about the x, y and z axes respectively.
+        /// </summary>
+        public static Matrix rotation3Dx(float angle) => new Matrix(new float[,]
+        { { 1, 0, 0 },
+        { 0, (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)) },
+        { 0, (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)) } });
+        public static Matrix rotation3Dy(float angle) => new Matrix(new float[,]
+        { { (float)Math.Cos(deg2Rad(angle)), 0, (float)Math.Sin(deg2Rad(angle)) },
+        { 0, 1, 0 },
+        { -(float)Math.Sin(deg2Rad(angle)), 0, (float)Math.Cos(deg2Rad(angle)) } });
+        public static Matrix rotation3Dz(float angle) => new Matrix(new float[,]
+        { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)), 0 },
+        { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)), 0 },
+        { 0, 0, 1 } });
     }
     class Program
     {
@@ -414,7 +411,7 @@ namespace Matrix
             Console.WriteLine("Identity matrix = \n" + myMatrix9);
             Console.WriteLine("Zero matrix = \n" + myMatrix10);
 
-            Matrix myMatrix11 = Matrix.translationMatrix(new float[] { 1, 2, 3 }); // test translation matrix
+            Matrix myMatrix11 = MatrixHelpers.translationMatrix(new float[] { 1, 2, 3 }); // test translation matrix
             Console.WriteLine("Translation matrix = \n" + myMatrix11);
 
             Matrix myMatrix12 = new Matrix(new float[,] { { 1, 2, 3 } }); // test translation
@@ -422,12 +419,12 @@ namespace Matrix
             Matrix myMatrix13 = myMatrix12.TranslateMatrix(new float[] { 1, 2, 3 });            
             Console.WriteLine("Translation of C = \n" + myMatrix13);
 
-            Matrix myMatrix14 = Matrix.scalingMatrix(new float[] { 1, 2, 3 }); // test scaling matrix
+            Matrix myMatrix14 = MatrixHelpers.scalingMatrix(new float[] { 1, 2, 3 }); // test scaling matrix
             Console.WriteLine("Scaling matrix = \n" + myMatrix14);
             Matrix myMatrix15 = myMatrix12.ScaleMatrix(new float[] { 1, 2, 3 });
             Console.WriteLine("Scaling of C = \n" + myMatrix15);
 
-            Matrix myMatrix16 = Matrix.rotation2D(45); // test 2D rotation matrix
+            Matrix myMatrix16 = MatrixHelpers.rotation2D(45); // test 2D rotation matrix
             Console.WriteLine("2D rotation matrix = \n" + myMatrix16);
 
             Matrix myMatrix17 = new Matrix(new float[,] { { 3, 7 } }); // test 2D rotation
@@ -435,11 +432,11 @@ namespace Matrix
             Matrix myMatrix18 = myMatrix17.Rotate2D(45);
             Console.WriteLine("2D rotation of D = \n" + myMatrix18);
 
-            Matrix myMatrix19 = Matrix.rotation3Dx(45); // test 3D rotation matrix
+            Matrix myMatrix19 = MatrixHelpers.rotation3Dx(45); // test 3D rotation matrix
             Console.WriteLine("3D rotation matrix about x axis = \n" + myMatrix19);
-            Matrix myMatrix20 = Matrix.rotation3Dy(45);
+            Matrix myMatrix20 = MatrixHelpers.rotation3Dy(45);
             Console.WriteLine("3D rotation matrix about y axis = \n" + myMatrix20);
-            Matrix myMatrix21 = Matrix.rotation3Dz(45);
+            Matrix myMatrix21 = MatrixHelpers.rotation3Dz(45);
             Console.WriteLine("3D rotation matrix about z axis = \n" + myMatrix21);
 
             Matrix myMatrix22 = new Matrix(new float[,] { { 3, 7, 9 } }); // test 3D rotation
