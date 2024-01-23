@@ -1,9 +1,9 @@
 const cacheName = "DefaultCompany-Matrix Visualizer-0.1";
 const contentToCache = [
     "Build/temp_build.loader.js",
-    "Build/temp_build.framework.js.br",
-    "Build/temp_build.data.br",
-    "Build/temp_build.wasm.br",
+    "Build/temp_build.framework.js",
+    "Build/temp_build.data",
+    "Build/temp_build.wasm",
     "TemplateData/style.css"
 
 ];
