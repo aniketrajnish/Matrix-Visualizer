@@ -4,9 +4,9 @@
 /// You can test here: https://www.programiz.com/csharp-programming/online-compiler/
 /// </summary>
 using System;
-using System.Text;
+using System.Linq;
 
-namespace Matrix
+namespace MatrixLibrary
 {    
     internal class MatrixHelpers
     {
@@ -31,10 +31,7 @@ namespace Matrix
         /// <return>
         /// If the given 2D array of floats is a valid matrix.
         /// </return>
-        public static bool IsValidMatrix(float[,] data) => !(data == null || data.GetLength(0) == 0 || data.GetLength(1) == 0);
-        /// <summary>
-        /// Methods to convert between degrees and radians.
-        /// </summary>
+        public static bool IsValidMatrix(float[,] data) => !(data == null || data.GetLength(0) == 0 || data.GetLength(1) == 0);        
         public static Matrix HomogenizeVector(Matrix m)
         {
             /// <summary>
@@ -89,6 +86,9 @@ namespace Matrix
 
             return result;
         }
+        /// <summary>
+        /// Methods to convert between degrees and radians.
+        /// </summary>
         public static float deg2Rad(float angle) => (float)(Math.PI * angle / 180);
         public static float rad2Deg(float angle) => (float)(angle * 180 / Math.PI);
         /// <summary>
@@ -113,5 +113,9 @@ namespace Matrix
         { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)), 0 },
         { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)), 0 },
         { 0, 0, 1 } });
+        /// <summary>
+        /// Method to concatenate matrices by multiplying them.
+        /// </summary>
+        public static Matrix Concatenation(Matrix m, Matrix[] ms) => ms.Aggregate(m, (acc, next) => acc * next);
     }   
 }

@@ -5,6 +5,7 @@
 /// </summary>
 using System;
 using System.Text;
+using System.Linq;
 
 namespace Matrix
 {
@@ -72,7 +73,7 @@ namespace Matrix
             /// <summary>
             /// Overloads the + operator to add two matrices.
             /// </summary>
-            if (m1.data.GetLength(0) != m2.data.GetLength(0) || m1.data.GetLength(1) != m2.data.GetLength(1))
+            if (m1.data.GetLength(0) != m2.data.GetLength(0) && m1.data.GetLength(1) != m2.data.GetLength(1))
                 throw new ArgumentException("Matrices must have the same dimensions to be added.");
 
             float[,] result = new float[m1.data.GetLength(0), m1.data.GetLength(1)];
@@ -88,7 +89,7 @@ namespace Matrix
             /// <summary>
             /// Overloads the - operator to subtract two matrices.
             /// </summary>
-            if (m1.data.GetLength(0) != m2.data.GetLength(0) || m1.data.GetLength(1) != m2.data.GetLength(1))
+            if (m1.data.GetLength(0) != m2.data.GetLength(0) && m1.data.GetLength(1) != m2.data.GetLength(1))
                 throw new ArgumentException("Matrices must have the same dimensions to be subtracted.");
 
             float[,] result = new float[m1.data.GetLength(0), m1.data.GetLength(1)];
@@ -151,7 +152,7 @@ namespace Matrix
                     transposedData[i, j] = m.data[j, i]; // interchange the rows and columns of the matrix
 
             return new Matrix(transposedData);
-        }    
+        }
         public Matrix TranslateMatrix(float[] t)
         {
             /// <summary>
@@ -165,7 +166,7 @@ namespace Matrix
             Matrix translationMatrix = MatrixHelpers.translationMatrix(t);
 
             return MatrixHelpers.HomogenizeVector(this) * ~translationMatrix;
-        }        
+        }
         public Matrix ScaleMatrix(float[] s)
         {
             /// <summary>
@@ -179,7 +180,7 @@ namespace Matrix
             Matrix scalingMatrix = MatrixHelpers.scalingMatrix(s);
 
             return MatrixHelpers.HomogenizeVector(this) * scalingMatrix;
-        }    
+        }
         public Matrix Rotate2D(float angle)
         {
             /// <summary>
@@ -204,6 +205,34 @@ namespace Matrix
 
             return this * rotationMatrix;
         }
+        public Matrix WorldSpaceMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
+        {
+            /// <summary>
+            /// Returns the world space transformation matrix for the given translation, scaling and rotation vectors.
+            /// P = T * Rz * Ry * Rx * S * I * p
+            /// Performs pre-multiplication of the given matrix with the given translation, scaling and rotation vectors.
+            /// </summary>
+            if (data.GetLength(0) != 1 || data.GetLength(1) != 4)
+                throw new ArgumentException("The original matrix must be 1x4 for world space transformations.");
+
+            if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
+                throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
+
+            Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
+            Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
+
+            // Ensure rs has enough values for rotation or default to no rotation
+            float rx = (rs != null) ? rs[0] : 0f;
+            float ry = (rs != null) ? rs[1] : 0f;
+            float rz = (rs != null) ? rs[2] : 0f;
+            Matrix r = MatrixHelpers.rotation3Dz(rz) * MatrixHelpers.rotation3Dy(ry) * MatrixHelpers.rotation3Dx(rx);
+            Matrix i = Matrix.identity(4); // why tho
+
+            Matrix[] preTrans = new Matrix[] { t, r, s, i };
+
+            return MatrixHelpers.Concatenation(this, new Matrix[] { t, r, s, i });
+        }
+
         public static bool operator ==(Matrix m1, Matrix m2)
         {
             /// <summary>
@@ -285,9 +314,6 @@ namespace Matrix
         /// If the given 2D array of floats is a valid matrix.
         /// </return>
         public static bool IsValidMatrix(float[,] data) => !(data == null || data.GetLength(0) == 0 || data.GetLength(1) == 0);
-        /// <summary>
-        /// Methods to convert between degrees and radians.
-        /// </summary>
         public static Matrix HomogenizeVector(Matrix m)
         {
             /// <summary>
@@ -342,6 +368,9 @@ namespace Matrix
 
             return result;
         }
+        /// <summary>
+        /// Methods to convert between degrees and radians.
+        /// </summary>
         public static float deg2Rad(float angle) => (float)(Math.PI * angle / 180);
         public static float rad2Deg(float angle) => (float)(angle * 180 / Math.PI);
         /// <summary>
@@ -366,6 +395,10 @@ namespace Matrix
         { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)), 0 },
         { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)), 0 },
         { 0, 0, 1 } });
+        /// <summary>
+        /// Method to concatenate matrices by multiplying them.
+        /// </summary>
+        public static Matrix Concatenation(Matrix m, Matrix[] ms) => ms.Aggregate(m, (acc, next) => acc * next);
     }
     class Program
     {
@@ -416,7 +449,7 @@ namespace Matrix
 
             Matrix myMatrix12 = new Matrix(new float[,] { { 1, 2, 3 } }); // test translation
             Console.WriteLine("C = \n" + myMatrix12);
-            Matrix myMatrix13 = myMatrix12.TranslateMatrix(new float[] { 1, 2, 3 });            
+            Matrix myMatrix13 = myMatrix12.TranslateMatrix(new float[] { 1, 2, 3 });
             Console.WriteLine("Translation of C = \n" + myMatrix13);
 
             Matrix myMatrix14 = MatrixHelpers.scalingMatrix(new float[] { 1, 2, 3 }); // test scaling matrix
@@ -441,8 +474,15 @@ namespace Matrix
 
             Matrix myMatrix22 = new Matrix(new float[,] { { 3, 7, 9 } }); // test 3D rotation
             Console.WriteLine("E = \n" + myMatrix22);
-            Matrix myMatrix23 = myMatrix22.Rotate3D(rz:45);
+            Matrix myMatrix23 = myMatrix22.Rotate3D(rz: 45);
             Console.WriteLine("3D rotation of E = \n" + myMatrix23);
+
+            Matrix myMatrix24 = Matrix.identity(4);
+            Matrix myMatrix25 = Matrix.identity(4);
+            Matrix myMatrix26 = Matrix.identity(4);
+            Matrix myMatrix27 = Matrix.identity(4);
+            Matrix myMatrix28 = MatrixHelpers.Concatenation(myMatrix1, new Matrix[] { myMatrix2, myMatrix24, myMatrix25, myMatrix26, myMatrix27 }); // test matrix multiplication with identity matrix
+            Console.WriteLine("A * B * I * I * I * I = \n" + myMatrix28);
         }
     }
 }

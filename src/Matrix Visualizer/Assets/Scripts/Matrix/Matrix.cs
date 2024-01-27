@@ -6,13 +6,13 @@
 using System;
 using System.Text;
 
-namespace Matrix
+namespace MatrixLibrary
 {
     /// <summary>
     /// I decided to put everything in one namespace to easily access the Matrix class and its helper functions.
     /// It also has a test program to test the Matrix class. (will be removed later) 
     /// </summary>
-    internal class Matrix
+    public class Matrix
     {
         /// <summary>
         /// This class represents a matrix.
@@ -204,11 +204,45 @@ namespace Matrix
 
             return this * rotationMatrix;
         }
+        public Matrix WorldSpaceMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
+        {
+            /// <summary>
+            /// Returns the world space transformation matrix for the given translation, scaling and rotation vectors.
+            /// P = T * Rz * Ry * Rx * S * I * p
+            /// Performs pre-multiplication of the given matrix with the given translation, scaling and rotation vectors.
+            /// </summary>
+            if (data.GetLength(0) != 1 || data.GetLength(1) != 4)
+                throw new ArgumentException("The original matrix must be 1x4 for world space transformations.");
+
+            if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
+                throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
+
+            Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
+            Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
+
+            // Ensure rs has enough values for rotation or default to no rotation
+            float rx = (rs != null) ? rs[0] : 0f;
+            float ry = (rs != null) ? rs[1] : 0f;
+            float rz = (rs != null) ? rs[2] : 0f;
+            Matrix r = MatrixHelpers.rotation3Dz(rz) * MatrixHelpers.rotation3Dy(ry) * MatrixHelpers.rotation3Dx(rx);
+            Matrix i = Matrix.identity(4); // why tho
+
+            Matrix[] preTrans = new Matrix[] { t, r, s, i };
+
+            return MatrixHelpers.Concatenation(this, new Matrix[] { t, r, s, i });
+        }
         public static bool operator ==(Matrix m1, Matrix m2)
         {
             /// <summary>
             /// Overloads the == operator to check if two matrices are equal.
             /// </summary>
+            
+            if (ReferenceEquals(m1, m2) || m1 is null && m2 is null)
+                return true;
+
+            if (m1 is null || m2 is null)
+                return false;
+
             if (m1.data.GetLength(0) != m2.data.GetLength(0) || m1.data.GetLength(1) != m2.data.GetLength(1))
                 return false;
 
@@ -234,15 +268,8 @@ namespace Matrix
                 return false;
 
             Matrix m = (Matrix)obj;
-            if (data.GetLength(0) != m.data.GetLength(0) || data.GetLength(1) != m.data.GetLength(1))
-                return false;
 
-            for (int i = 0; i < data.GetLength(0); i++)
-                for (int j = 0; j < data.GetLength(1); j++)
-                    if (data[i, j] != m.data[i, j])
-                        return false;
-
-            return true;
+            return this == m;
         }
         public override int GetHashCode()
         {
