@@ -29,7 +29,9 @@ public class OperationGUI : MonoBehaviour
             GameObject btn = Instantiate(operationBtn, transform);
             TextMeshProUGUI textComponent = btn.GetComponentInChildren<TextMeshProUGUI>();
             textComponent.text = operationNames[i];
+
             string operationName = operationNames[i];
+
             btn.GetComponent<Button>().onClick.AddListener(() => ChangeOperationMode(operationName));
             btn.GetComponent<Button>().onClick.AddListener(() => cGUI.UpdateDisplay());
         }

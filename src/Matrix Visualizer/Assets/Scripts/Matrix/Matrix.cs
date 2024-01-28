@@ -202,7 +202,7 @@ namespace MatrixLibrary
 
             Matrix rotationMatrix = MatrixHelpers.rotation3Dx(rx ?? 0) * MatrixHelpers.rotation3Dy(ry ?? 0) * MatrixHelpers.rotation3Dz(rz ?? 0); // the total rotation matrix is basically the product of the three rotation matrices
 
-            return this * rotationMatrix;
+            return MatrixHelpers.HomogenizeVector(this) * rotationMatrix;
         }
         public Matrix WorldSpaceMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
         {

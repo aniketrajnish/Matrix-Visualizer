@@ -50,6 +50,25 @@ namespace MatrixLibrary
 
             return new Matrix(result);
         }
+        public static Matrix HomogenizeMatrix(Matrix m)
+        {
+            /// <summary>
+            /// Homogenizes a given matrix by adding a column of ones.
+            /// This is typically used to convert a 3D point for affine transformations.
+            /// </summary>
+            if (m.data == null || m.data.GetLength(0) == 0 || m.data.GetLength(1) == 0)
+                throw new ArgumentException("Invalid matrix data for homogenization.");            
+            
+            float[,] result = new float[m.data.GetLength(0) + 1, m.data.GetLength(1) + 1];
+
+            for (int i = 0; i < m.data.GetLength(0); i++)            
+                for (int j = 0; j < m.data.GetLength(1); j++)                
+                    result[i, j] = m.data[i, j];
+
+            result[m.data.GetLength(0), m.data.GetLength(1)] = 1; // set the last element to 1
+
+            return new Matrix(result);
+        }
         public static Matrix translationMatrix(float[] t)
         {
             /// <summary>
@@ -101,18 +120,18 @@ namespace MatrixLibrary
         /// <summary>
         /// The next three functions create 3D rotation matrices about the x, y and z axes respectively.
         /// </summary>
-        public static Matrix rotation3Dx(float angle) => new Matrix(new float[,]
+        public static Matrix rotation3Dx(float angle) => MatrixHelpers.HomogenizeMatrix(new Matrix(new float[,]
         { { 1, 0, 0 },
         { 0, (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)) },
-        { 0, (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)) } });
-        public static Matrix rotation3Dy(float angle) => new Matrix(new float[,]
+        { 0, (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)) } }));
+        public static Matrix rotation3Dy(float angle) => MatrixHelpers.HomogenizeMatrix(new Matrix(new float[,]
         { { (float)Math.Cos(deg2Rad(angle)), 0, (float)Math.Sin(deg2Rad(angle)) },
         { 0, 1, 0 },
-        { -(float)Math.Sin(deg2Rad(angle)), 0, (float)Math.Cos(deg2Rad(angle)) } });
-        public static Matrix rotation3Dz(float angle) => new Matrix(new float[,]
+        { -(float)Math.Sin(deg2Rad(angle)), 0, (float)Math.Cos(deg2Rad(angle)) } }));
+        public static Matrix rotation3Dz(float angle) => MatrixHelpers.HomogenizeMatrix(new Matrix(new float[,]
         { { (float)Math.Cos(deg2Rad(angle)), -(float)Math.Sin(deg2Rad(angle)), 0 },
         { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)), 0 },
-        { 0, 0, 1 } });
+        { 0, 0, 1 } }));
         /// <summary>
         /// Method to concatenate matrices by multiplying them.
         /// </summary>

@@ -7,8 +7,7 @@ public enum Operation
     TRANSPOSE,
     EQALITY_CHECK,
     TRANSLATION,
-    SCALING,    
-    ROTATION_2D,
-    ROTATION_3D,
+    SCALING,
+    ROTATION,
     WORLD_SPACE_TRANSFORMATION    
 }

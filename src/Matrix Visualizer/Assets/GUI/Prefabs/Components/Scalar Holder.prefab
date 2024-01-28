@@ -45,6 +45,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8662463257388114015}
     m_Modifications:
+    - target: {fileID: 184669170930650119, guid: cbfc951f802185542903286d0e2e1901, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1.3565483
+      objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
       value: 40

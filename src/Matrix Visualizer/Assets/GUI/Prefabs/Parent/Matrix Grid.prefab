@@ -52,6 +52,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 7063321078907662956, guid: cbfc951f802185542903286d0e2e1901, type: 3}
+  plusR: {fileID: 0}
+  minusR: {fileID: 0}
+  plusC: {fileID: 0}
+  minusC: {fileID: 0}
+  rows: 4
+  columns: 4
+  maxSize: 9
 --- !u!114 &6627020712389952798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,6 +98,18 @@ PrefabInstance:
     - target: {fileID: 7063321078907662956, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147170585118928166, guid: cbfc951f802185542903286d0e2e1901, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147170585118928166, guid: cbfc951f802185542903286d0e2e1901, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147170585118928166, guid: cbfc951f802185542903286d0e2e1901, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7381576920850581754, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_Pivot.x

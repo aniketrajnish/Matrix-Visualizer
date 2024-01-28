@@ -180,7 +180,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4851044919471506029}
+      - m_Target: {fileID: 6842215176993346079}
         m_TargetAssemblyTypeName: MatrixGUI, Assembly-CSharp
         m_MethodName: RemoveColumn
         m_Mode: 1
@@ -412,7 +412,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4851044919471506029}
+      - m_Target: {fileID: 6842215176993346079}
         m_TargetAssemblyTypeName: MatrixGUI, Assembly-CSharp
         m_MethodName: RemoveRow
         m_Mode: 1
@@ -604,7 +604,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4851044919471506029}
+      - m_Target: {fileID: 6842215176993346079}
         m_TargetAssemblyTypeName: MatrixGUI, Assembly-CSharp
         m_MethodName: AddRow
         m_Mode: 1
@@ -644,7 +644,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5552476096164206268}
+  - {fileID: 5812012150895314638}
   - {fileID: 5676963282204837162}
   m_Father: {fileID: 0}
   m_RootOrder: -1
@@ -834,7 +834,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4851044919471506029}
+      - m_Target: {fileID: 6842215176993346079}
         m_TargetAssemblyTypeName: MatrixGUI, Assembly-CSharp
         m_MethodName: AddColumn
         m_Mode: 1
@@ -998,6 +998,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5525869199456325758, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5525869199456325758, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5525869199456325758, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6536663914855234181, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
       propertyPath: m_Name
       value: Matrix Grid
@@ -1015,7 +1027,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
---- !u!114 &4851044919471506029 stripped
+--- !u!224 &5812012150895314638 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 44663560184389242, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
+  m_PrefabInstance: {fileID: 5780026006591985844}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6842215176993346079 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1063598781420194475, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
   m_PrefabInstance: {fileID: 5780026006591985844}
@@ -1026,8 +1043,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eab1ccb456ff943488127e1f2e54607d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &5552476096164206268 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 44663560184389242, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
-  m_PrefabInstance: {fileID: 5780026006591985844}
-  m_PrefabAsset: {fileID: 0}

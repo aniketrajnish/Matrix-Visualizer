@@ -9,7 +9,7 @@ public class MatrixGUI : MonoBehaviour
     [SerializeField] GameObject inputField, plusR, minusR, plusC, minusC;    
     [HideInInspector] public int rows = 4, columns = 4, maxSize = 9;
     GridLayoutGroup glg;
-    private Matrix _matrix;
+    private Matrix _matrix, _vector;
     public Matrix matrix
     {
         get
@@ -21,6 +21,19 @@ public class MatrixGUI : MonoBehaviour
         {
             InputFromMatrix(value);
             _matrix = value;
+        }
+    }
+    public Matrix vector
+    {
+        get
+        {
+            _vector = MatrixFromInput();
+            return _vector;
+        }
+        set
+        {
+            InputFromVector(value);
+            _vector = value;
         }
     }
     Matrix MatrixFromInput()
@@ -75,16 +88,35 @@ public class MatrixGUI : MonoBehaviour
             ErrorGUI.instance.ShowError(ex.Message, 2f);
         }
     }
+    void InputFromVector(Matrix value)
+    {
+        try
+        {
+            rows = 1;
+            columns = value.data.GetLength(1);
+
+            CreateVectorUI();
+
+            TMP_InputField[] inputFields = GetComponentsInChildren<TMP_InputField>();
+
+            for (int i = 0; i < columns-1; i++)            
+                inputFields[i].text = value.data[0, i].ToString();            
+        }
+        catch (ArgumentException ex)
+        {
+            ErrorGUI.instance.ShowError(ex.Message, 2f);
+        }
+    }
     void Awake()
     {
         glg = GetComponent<GridLayoutGroup>();
 
         CreateMatrixUI();
     }
-    private void Update()
+    /*private void Update()
     {
         print(rows + " " + columns);
-    }
+    }*/
     void CreateMatrixUI()
     {
         foreach (Transform child in transform)
@@ -92,8 +124,6 @@ public class MatrixGUI : MonoBehaviour
             child.gameObject.SetActive(false);
             Destroy(child.gameObject);            
         }
-
-        glg = GetComponent<GridLayoutGroup>();
 
         glg.constraintCount = columns;
 
@@ -108,7 +138,34 @@ public class MatrixGUI : MonoBehaviour
         plusC.transform.localPosition = new Vector3(- offset, (rows + .25f) * (glg.cellSize.y + glg.spacing.y) / 2, plusC.transform.localPosition.z);
         minusC.transform.localPosition = new Vector3(offset, (rows + .25f) * (glg.cellSize.y + glg.spacing.y) / 2, minusC.transform.localPosition.z);
     }
+    void CreateVectorUI()
+    {
+        columns = 4;
+        rows = 1;
 
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(false);
+            Destroy(child.gameObject);
+        }
+
+        glg.constraintCount = columns;
+
+        for (int i = 0; i < columns; i++)
+        {
+            TMP_InputField tempInputField =  Instantiate(inputField, transform).GetComponent<TMP_InputField>();
+            if (i == columns - 1)
+            {
+                tempInputField.text = "1";
+                tempInputField.interactable = false;
+            }
+        }
+
+        plusC.SetActive(false);
+        minusC.SetActive(false);
+        plusR.SetActive(false);
+        minusR.SetActive(false);
+    }
     public void AddRow()
     {
         if (rows <= maxSize)

@@ -3,19 +3,22 @@ using TMPro;
 using MatrixLibrary;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.UI;
+using System.Linq;
 
 public class CalculationGUI : MonoBehaviour
 {
-    [SerializeField] GameObject scalarPrefab, matrixPrefab, operationDisplayPrefab;
     [SerializeField] OperationGUI opGUI;
-    [SerializeField] GameObject _zeroMatrixHolder, _identityMatrixHolder;
-
-    Transform calcGUIParent;    
-    List<MatrixGUI> matrices = new List<MatrixGUI>();
-    GameObject _scalarHolder, _resultMatrixHolder, _operationDisplayHolder;
+    [SerializeField] GameObject scalarPrefab, matrixPrefab, operationDisplayPrefab, translationMatrixPrefab, scalingMatrixPrefab, rotationMatrixPrefab;
+    [SerializeField] GameObject _zeroMatrixHolder, _identityMatrixHolder, _zeroIdentityHolder;
+    GameObject _scalarHolder, _resultMatrixHolder, _operationDisplayHolder; 
+    Transform calcGUIParent;
+    GridLayoutGroup glg;
+    List<MatrixGUI> matrices = new List<MatrixGUI>();    
     private void Awake()
     {
         calcGUIParent = transform.GetChild(0);
+        glg = calcGUIParent.GetComponent<GridLayoutGroup>();
         UpdateDisplay();
     }
     public void UpdateDisplay()
@@ -42,6 +45,15 @@ public class CalculationGUI : MonoBehaviour
             case Operation.EQALITY_CHECK:
                 EqualityCheckDisplay();
                 break;
+            case Operation.TRANSLATION:
+                CreateTranslationDisplay();
+                break;
+            case Operation.SCALING:
+                CreateScalingDisplay();
+                break;
+            case Operation.ROTATION:
+                CreateRotationDisplay();
+                break;
         }
     }
     public void CalculateAndDisplay()
@@ -67,6 +79,15 @@ public class CalculationGUI : MonoBehaviour
                     break;
                 case Operation.EQALITY_CHECK:
                     CalculateAndDisplayEquality();
+                    break; 
+                case Operation.TRANSLATION:
+                    CalculateAndDisplayTranslation();
+                    break;
+                case Operation.SCALING:
+                    CalculateAndDisplayScaling();
+                    break;
+                case Operation.ROTATION:
+                    CalculateAndDisplayRotation();
                     break;
             }
         }
@@ -77,45 +98,83 @@ public class CalculationGUI : MonoBehaviour
     }
     void AdditionDisplay()
     {
+        _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("+");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
     }
     void SubtractionDisplay()
     {
+        _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("-");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
     }
     void ScalarMultiplicationDisplay()
     {
+        _zeroIdentityHolder.SetActive(true);
         _scalarHolder = Instantiate(scalarPrefab, calcGUIParent);
         CreateOperationDisplay("*");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());        
     }
     void MatrixMultiplicationDisplay()
     {
+        _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
     }
     void TransposeDisplay()
-    {        
+    {   
+        _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("T");
     }
     void EqualityCheckDisplay()
-    {        
+    {  
+        _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+    }
+    void CreateTranslationDisplay()
+    {
+        glg.cellSize = new Vector2(400, 400);
+        _zeroIdentityHolder.SetActive(false);
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[1, 4]);
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(translationMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        CreateOperationDisplay("T");
+    }
+    void CreateScalingDisplay()
+    {
+        glg.cellSize = new Vector2(400, 400);
+        _zeroIdentityHolder.SetActive(false);
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[1, 4]);
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(scalingMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+    }
+    void CreateRotationDisplay()
+    {
+        glg.cellSize = new Vector2(400, 400);
+        _zeroIdentityHolder.SetActive(false);
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[1, 4]);
+        CreateOperationDisplay("*");
+        Instantiate(rotationMatrixPrefab, calcGUIParent);
+        matrices.Clear();
+        matrices = GetComponentsInChildren<MatrixGUI>().ToList();
+        foreach (MatrixGUI mGUI in matrices)
+            print(mGUI.transform.parent.parent.name);
     }
     void CreateOperationDisplay(string operation)
     {
         _operationDisplayHolder = Instantiate(operationDisplayPrefab, calcGUIParent);
         TextMeshProUGUI operationDisplayText = _operationDisplayHolder.GetComponentInChildren<TextMeshProUGUI>();
         operationDisplayText.text = operation;
-    }
+    }    
     void ClearDisplay()
     {
         foreach (Transform child in calcGUIParent)            
@@ -123,7 +182,7 @@ public class CalculationGUI : MonoBehaviour
 
         matrices.Clear();
         _resultMatrixHolder = null;
-    }
+    }   
     void CalculateAndDisplayAddition()
     {
         Matrix sum = matrices[0].matrix + matrices[1].matrix;
@@ -211,6 +270,56 @@ public class CalculationGUI : MonoBehaviour
             _operationDisplayHolder.GetComponentInChildren<TextMeshProUGUI>().text = "=";        
         else
             _operationDisplayHolder.GetComponentInChildren<TextMeshProUGUI>().text = "≠";
+    }
+    void CalculateAndDisplayTranslation()
+    {
+        Matrix translationMatrix = matrices[0].matrix * ~matrices[1].matrix;
+
+        if (_resultMatrixHolder == null)
+        {
+            CreateOperationDisplay("=");
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        else
+        {
+            Destroy(_resultMatrixHolder);
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = translationMatrix;
+    }
+    void CalculateAndDisplayScaling()
+    {
+        Matrix scalingMatrix = matrices[0].matrix * matrices[1].matrix;
+
+        if (_resultMatrixHolder == null)
+        {
+            CreateOperationDisplay("=");
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        else
+        {
+            Destroy(_resultMatrixHolder);
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = scalingMatrix;
+    }
+    void CalculateAndDisplayRotation()
+    {
+        Matrix rotationMatrix = matrices[5].matrix * matrices[4].matrix * matrices[3].matrix; // Rz * Ry * Rx  
+        rotationMatrix = matrices[2].matrix * rotationMatrix; // T * Rz * Ry * Rx
+        print(matrices[2].matrix + " " + matrices[5].matrix + " " + matrices[4].matrix + " " + matrices[3].matrix);
+
+        if (_resultMatrixHolder == null)
+        {
+            CreateOperationDisplay("=");
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        else
+        {
+            Destroy(_resultMatrixHolder);
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = rotationMatrix;
     }
     public void CreateZeroIdentityMatrix()
     {
