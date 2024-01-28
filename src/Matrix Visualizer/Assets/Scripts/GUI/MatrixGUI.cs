@@ -168,7 +168,7 @@ public class MatrixGUI : MonoBehaviour
     }
     public void AddRow()
     {
-        if (rows <= maxSize)
+        if (rows < maxSize)
         {
             rows++;
             CreateMatrixUI();
@@ -178,7 +178,7 @@ public class MatrixGUI : MonoBehaviour
     }
     public void AddColumn()
     {
-        if (columns <= maxSize)
+        if (columns < maxSize)
         {
             columns++;
             CreateMatrixUI();
