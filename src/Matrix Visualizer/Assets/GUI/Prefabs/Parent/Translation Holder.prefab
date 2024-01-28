@@ -108,7 +108,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Z
+  m_text: Tz
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e41a379d7187a6745bf5e17789b7fecd, type: 2}
   m_sharedMaterial: {fileID: 3616365008217242107, guid: e41a379d7187a6745bf5e17789b7fecd, type: 2}
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: X
+  m_text: Tx
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e41a379d7187a6745bf5e17789b7fecd, type: 2}
   m_sharedMaterial: {fileID: 3616365008217242107, guid: e41a379d7187a6745bf5e17789b7fecd, type: 2}
@@ -454,7 +454,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Y
+  m_text: Ty
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e41a379d7187a6745bf5e17789b7fecd, type: 2}
   m_sharedMaterial: {fileID: 3616365008217242107, guid: e41a379d7187a6745bf5e17789b7fecd, type: 2}
@@ -631,9 +631,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Matrix Holder
       objectReference: {fileID: 0}
+    - target: {fileID: 6661669272966637990, guid: 7f999f2f3996757459790e2996e2b9ea, type: 3}
+      propertyPath: m_fontSize
+      value: 40.55
+      objectReference: {fileID: 0}
     - target: {fileID: 6890067381911054342, guid: 7f999f2f3996757459790e2996e2b9ea, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423864399165055391, guid: 7f999f2f3996757459790e2996e2b9ea, type: 3}
+      propertyPath: m_fontSize
+      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -659,7 +667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSizeBase
@@ -667,7 +675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2577689468225932362, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 56.75
       objectReference: {fileID: 0}
     - target: {fileID: 2577689468225932362, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSizeBase
@@ -789,7 +797,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSizeBase
@@ -797,7 +805,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2577689468225932362, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 56.75
       objectReference: {fileID: 0}
     - target: {fileID: 2577689468225932362, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSizeBase
@@ -919,7 +927,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 1778947505853432947, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSizeBase
@@ -927,7 +935,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2577689468225932362, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 56.75
       objectReference: {fileID: 0}
     - target: {fileID: 2577689468225932362, guid: cbfc951f802185542903286d0e2e1901, type: 3}
       propertyPath: m_fontSizeBase

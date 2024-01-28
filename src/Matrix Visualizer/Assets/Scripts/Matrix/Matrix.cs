@@ -227,9 +227,7 @@ namespace MatrixLibrary
             Matrix r = MatrixHelpers.rotation3Dz(rz) * MatrixHelpers.rotation3Dy(ry) * MatrixHelpers.rotation3Dx(rx);
             Matrix i = Matrix.identity(4); // why tho
 
-            Matrix[] preTrans = new Matrix[] { t, r, s, i };
-
-            return MatrixHelpers.Concatenation(this, new Matrix[] { t, r, s, i });
+            return MatrixHelpers.Concatenation(this, new Matrix[] { ~t, r, s, i });
         }
         public static bool operator ==(Matrix m1, Matrix m2)
         {

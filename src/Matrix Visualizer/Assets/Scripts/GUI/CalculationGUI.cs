@@ -9,7 +9,7 @@ using System.Linq;
 public class CalculationGUI : MonoBehaviour
 {
     [SerializeField] OperationGUI opGUI;
-    [SerializeField] GameObject scalarPrefab, matrixPrefab, operationDisplayPrefab, translationMatrixPrefab, scalingMatrixPrefab, rotationMatrixPrefab;
+    [SerializeField] GameObject scalarPrefab, matrixPrefab, operationDisplayPrefab, translationMatrixPrefab, scalingMatrixPrefab, rotationMatrixPrefab, wstMatrixPrefab;
     [SerializeField] GameObject _zeroMatrixHolder, _identityMatrixHolder, _zeroIdentityHolder;
     GameObject _scalarHolder, _resultMatrixHolder, _operationDisplayHolder; 
     Transform calcGUIParent;
@@ -54,6 +54,9 @@ public class CalculationGUI : MonoBehaviour
             case Operation.ROTATION:
                 CreateRotationDisplay();
                 break;
+            case Operation.WORLD_SPACE_TRANSFORMATION:
+                CreateWorldSpaceTranformationDisplay();
+                break;
         }
     }
     public void CalculateAndDisplay()
@@ -88,6 +91,9 @@ public class CalculationGUI : MonoBehaviour
                     break;
                 case Operation.ROTATION:
                     CalculateAndDisplayRotation();
+                    break;
+                case Operation.WORLD_SPACE_TRANSFORMATION:
+                    CalculateAndDisplayWorldSpaceTransformation();
                     break;
             }
         }
@@ -166,8 +172,19 @@ public class CalculationGUI : MonoBehaviour
         Instantiate(rotationMatrixPrefab, calcGUIParent);
         matrices.Clear();
         matrices = GetComponentsInChildren<MatrixGUI>().ToList();
-        foreach (MatrixGUI mGUI in matrices)
-            print(mGUI.transform.parent.parent.name);
+        /*foreach (MatrixGUI mGUI in matrices)
+            print(mGUI.transform.parent.parent.name);*/
+    }
+    void CreateWorldSpaceTranformationDisplay()
+    {
+        glg.cellSize = new Vector2(400, 400);
+        _zeroIdentityHolder.SetActive(false);
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[1, 4]);
+        CreateOperationDisplay("*");
+        Instantiate(wstMatrixPrefab, calcGUIParent);
+        matrices.Clear();
+        matrices = GetComponentsInChildren<MatrixGUI>().ToList();
     }
     void CreateOperationDisplay(string operation)
     {
@@ -306,7 +323,7 @@ public class CalculationGUI : MonoBehaviour
     void CalculateAndDisplayRotation()
     {
         Matrix rotationMatrix = matrices[5].matrix * matrices[4].matrix * matrices[3].matrix; // Rz * Ry * Rx  
-        rotationMatrix = matrices[2].matrix * rotationMatrix; // T * Rz * Ry * Rx
+        rotationMatrix = matrices[2].matrix * rotationMatrix; // P * Rz * Ry * Rx
         print(matrices[2].matrix + " " + matrices[5].matrix + " " + matrices[4].matrix + " " + matrices[3].matrix);
 
         if (_resultMatrixHolder == null)
@@ -320,6 +337,23 @@ public class CalculationGUI : MonoBehaviour
             _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
         }
         _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = rotationMatrix;
+    }
+    void CalculateAndDisplayWorldSpaceTransformation()
+    {
+        Matrix wstMatrix = ~matrices[7].matrix * matrices[6].matrix * matrices[5].matrix * matrices[4].matrix * matrices[3].matrix * matrices[8].matrix; // T * Rz * Ry * Rx * S * I
+        wstMatrix = matrices[2].matrix * wstMatrix; // P * T * Rz * Ry * Rx * S * I
+
+        if (_resultMatrixHolder == null)
+        {
+            CreateOperationDisplay("=");
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        else
+        {
+            Destroy(_resultMatrixHolder);
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = wstMatrix;
     }
     public void CreateZeroIdentityMatrix()
     {

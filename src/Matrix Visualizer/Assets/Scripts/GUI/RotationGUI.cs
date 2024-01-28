@@ -34,6 +34,12 @@ public class RotationGUI : MonoBehaviour
         }
 
         transform.SetParent(transform.parent.parent,false);
+
+        if (WorldSpaceGUI.instance != null)
+        {
+            transform.SetParent(transform.parent.parent, false);
+            WorldSpaceGUI.instance.WorldSpaceLayout();            
+        }
     }
     void CreateRotXMatrix()
     {
