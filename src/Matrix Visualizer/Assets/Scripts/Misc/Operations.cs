@@ -1,5 +1,8 @@
 public enum Operation
 {    
+    /// <summary>
+    /// The enum to store the operation that user wants to perform.
+    /// </summary>
     ADDITION,
     SUBTRACTION,
     SCALAR_MULTIPLICATION,
@@ -9,5 +12,5 @@ public enum Operation
     TRANSLATION,
     SCALING,
     ROTATION,
-    WORLD_SPACE_TRANSFORMATION    
+    WORLD_SPACE_TRANSFORMATION
 }

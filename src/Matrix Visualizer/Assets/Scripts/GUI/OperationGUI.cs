@@ -6,6 +6,9 @@ using TMPro;
 
 public class OperationGUI : MonoBehaviour
 {
+    /// <summary>
+    /// Class that creates the operation buttons and adds listeners to them.
+    /// </summary>
     [SerializeField] GameObject operationBtn, operationDisplayObject;
     [SerializeField] CalculationGUI cGUI;
     List<string> operationNames;
@@ -21,6 +24,11 @@ public class OperationGUI : MonoBehaviour
     }
     void CreateBtns()
     {
+        /// <summary>
+        /// This method creates the operation buttons.
+        /// It names the buttons according to the enum names.
+        /// These buttons also have a listner that updates the GUI based on the operation selected.
+        /// </summary>
         foreach (Transform child in transform)        
             Destroy(child.gameObject);
 
@@ -36,7 +44,7 @@ public class OperationGUI : MonoBehaviour
             btn.GetComponent<Button>().onClick.AddListener(() => cGUI.UpdateDisplay());
         }
     }
-    public static string EnumString(string enumName) => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(enumName.ToLower().Replace("_", " "));
-    public static string ReverseEnumString(string enumName) => enumName.ToUpper().Replace(" ", "_");
-    public void ChangeOperationMode(string operationName) => currentOp = (Operation)System.Enum.Parse(typeof(Operation), ReverseEnumString(operationName));
+    public static string EnumString(string enumName) => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(enumName.ToLower().Replace("_", " ")); // converts enum to title case
+    public static string ReverseEnumString(string enumName) => enumName.ToUpper().Replace(" ", "_"); // back from title case to enum
+    public void ChangeOperationMode(string operationName) => currentOp = (Operation)System.Enum.Parse(typeof(Operation), ReverseEnumString(operationName)); // tracks the current operation
 }

@@ -6,11 +6,14 @@ using System.Collections.Generic;
 
 public class RotationGUI : MonoBehaviour
 {
+    /// <summary>
+    /// Creates and updates the three rotation matrices based on the user input.
+    /// </summary>
     [SerializeField] TMPro.TMP_InputField[] rInputs;
     MatrixGUI[] mGUI;
     private void Start()
     {
-        rInputs[0].onValueChanged.AddListener((string value) => CreateRotXMatrix());
+        rInputs[0].onValueChanged.AddListener((string value) => CreateRotXMatrix()); // update the matrix when the user changes the input
         rInputs[1].onValueChanged.AddListener((string value) => CreateRotYMatrix());
         rInputs[2].onValueChanged.AddListener((string value) => CreateRotZMatrix());
 
@@ -23,11 +26,11 @@ public class RotationGUI : MonoBehaviour
 
         mGUI = GetComponentsInChildren<MatrixGUI>();
 
-        CreateRotXMatrix();
+        CreateRotXMatrix(); // init rotation matrices
         CreateRotYMatrix();
         CreateRotZMatrix();
 
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        for (int i = transform.childCount - 1; i >= 0; i--) // unparent to move them within the layout and put the GUI in the right order
         {
             Transform child = transform.GetChild(i);
             child.SetParent(transform.parent, false);
@@ -35,7 +38,7 @@ public class RotationGUI : MonoBehaviour
 
         transform.SetParent(transform.parent.parent,false);
 
-        if (WorldSpaceGUI.instance != null)
+        if (WorldSpaceGUI.instance != null) // in case the rot matrices are a part of the world space matrices, update the layout again to put them in the right order
         {
             transform.SetParent(transform.parent.parent, false);
             WorldSpaceGUI.instance.WorldSpaceLayout();            
@@ -43,6 +46,9 @@ public class RotationGUI : MonoBehaviour
     }
     void CreateRotXMatrix()
     {
+        /// <summary>
+        /// Creates a rotation matrix around the x-axis based on the user input.
+        /// </summary>
         try
         {
             float xVal = string.IsNullOrEmpty(rInputs[0].text) ? 0f : float.Parse(rInputs[0].text);
@@ -57,6 +63,9 @@ public class RotationGUI : MonoBehaviour
     }
     void CreateRotYMatrix()
     {
+        /// <summary>
+        /// Creates a rotation matrix around the y-axis based on the user input.
+        /// </summary>
         try
         {
             float yVal = string.IsNullOrEmpty(rInputs[1].text) ? 0f : float.Parse(rInputs[1].text);
@@ -71,6 +80,9 @@ public class RotationGUI : MonoBehaviour
     }
     void CreateRotZMatrix()
     {
+        /// <summary>
+        /// Creates a rotation matrix around the z-axis based on the user input.
+        /// </summary>
         try
         {
             float zVal = string.IsNullOrEmpty(rInputs[2].text) ? 0f : float.Parse(rInputs[2].text);

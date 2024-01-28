@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class SceneSwitchGUI : MonoBehaviour
 {
+    /// <summary>
+    /// For the next week :]
+    /// </summary>
     private void Awake()
     {
         GetComponent<Button>().onClick.AddListener(SceneSwitchTempMessgae);

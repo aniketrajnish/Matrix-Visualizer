@@ -8,6 +8,11 @@ using System.Linq;
 
 public class CalculationGUI : MonoBehaviour
 {
+    /// <summary>
+    /// The heart of the calculator GUI.
+    /// It creates the GUI based on the operation selected.
+    /// It then also calculates the result and displays it.
+    /// </summary>
     [SerializeField] OperationGUI opGUI;
     [SerializeField] GameObject scalarPrefab, matrixPrefab, operationDisplayPrefab, translationMatrixPrefab, scalingMatrixPrefab, rotationMatrixPrefab, wstMatrixPrefab;
     [SerializeField] GameObject _zeroMatrixHolder, _identityMatrixHolder, _zeroIdentityHolder;
@@ -23,7 +28,10 @@ public class CalculationGUI : MonoBehaviour
     }
     public void UpdateDisplay()
     {
-        ClearDisplay();
+        /// <summary>
+        /// Creates the GUI based on the operation selected.
+        /// </summary>
+        ClearDisplay(); // clearing the current GUI and its references
 
         switch (opGUI.currentOp)
         {
@@ -61,6 +69,10 @@ public class CalculationGUI : MonoBehaviour
     }
     public void CalculateAndDisplay()
     {
+        /// <summary>
+        /// Listens to the on click event of the calculate button.
+        /// Displays the result of the operation.
+        /// </summary>
         try
         {
             switch (opGUI.currentOp)
@@ -102,6 +114,9 @@ public class CalculationGUI : MonoBehaviour
             ErrorGUI.instance.ShowError(ex.Message, 3f);
         }
     }
+    /// <summary>
+    /// The functions below are used to create the GUI for the respective operations.
+    /// </summary>
     void AdditionDisplay()
     {
         _zeroIdentityHolder.SetActive(true);
@@ -145,8 +160,8 @@ public class CalculationGUI : MonoBehaviour
     }
     void CreateTranslationDisplay()
     {
-        glg.cellSize = new Vector2(400, 400);
-        _zeroIdentityHolder.SetActive(false);
+        glg.cellSize = new Vector2(400, 400); // only 4x1 and 4x4 matrices so we can reduce the cell size
+        _zeroIdentityHolder.SetActive(false); // no need for the zero and identity matrices
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         matrices[0].vector = new Matrix(new float[1, 4]);
         CreateOperationDisplay("*");
@@ -171,7 +186,7 @@ public class CalculationGUI : MonoBehaviour
         CreateOperationDisplay("*");
         Instantiate(rotationMatrixPrefab, calcGUIParent);
         matrices.Clear();
-        matrices = GetComponentsInChildren<MatrixGUI>().ToList();
+        matrices = GetComponentsInChildren<MatrixGUI>().ToList(); // since more than one matrix in the prefab
         /*foreach (MatrixGUI mGUI in matrices)
             print(mGUI.transform.parent.parent.name);*/
     }
@@ -188,28 +203,41 @@ public class CalculationGUI : MonoBehaviour
     }
     void CreateOperationDisplay(string operation)
     {
+        /// <summary>
+        /// Creates a text component to show the user what operation is being performed.
+        /// </summary>
         _operationDisplayHolder = Instantiate(operationDisplayPrefab, calcGUIParent);
         TextMeshProUGUI operationDisplayText = _operationDisplayHolder.GetComponentInChildren<TextMeshProUGUI>();
         operationDisplayText.text = operation;
     }    
     void ClearDisplay()
     {
-        foreach (Transform child in calcGUIParent)            
+        /// <summary>
+        /// Clears the current GUI and its references.
+        /// </summary>
+        foreach (Transform child in calcGUIParent)
+        {
+            child.gameObject.SetActive(false);
             Destroy(child.gameObject);
+        }
 
         matrices.Clear();
         _resultMatrixHolder = null;
+        _operationDisplayHolder = null;
     }   
+    /// <summary>
+    /// The functions below are used to calculate the result of the respective operations.
+    /// </summary>
     void CalculateAndDisplayAddition()
     {
         Matrix sum = matrices[0].matrix + matrices[1].matrix;
 
-        if (_resultMatrixHolder == null)
+        if (_resultMatrixHolder == null) // spawn the operation display and matrix if no calculation has been done yet
         {
             CreateOperationDisplay("=");
             _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent); 
         }
-        else
+        else // if a calculation has been done, destry old result and spawn new one
         {
             Destroy(_resultMatrixHolder);
             _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
@@ -234,7 +262,9 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndScalarMatrixMultiplication()
     {
-        float scalarValue = float.Parse(_scalarHolder.GetComponentInChildren<TMP_InputField>().text);
+        string sInput = _scalarHolder.GetComponentInChildren<TMP_InputField>().text;
+        float scalarValue = string.IsNullOrEmpty(sInput) ? 0f : float.Parse(sInput);
+
         Matrix product = scalarValue * matrices[0].matrix;
 
         if (_resultMatrixHolder == null)
@@ -357,6 +387,9 @@ public class CalculationGUI : MonoBehaviour
     }
     public void CreateZeroIdentityMatrix()
     {
+        /// <summary>
+        /// Creates a zero matrix, an identity matrix or both based on the user input.
+        /// </summary>
         try
         {
             TMP_InputField[] inputFieldsZero = _zeroMatrixHolder.GetComponentsInChildren<TMPro.TMP_InputField>();
