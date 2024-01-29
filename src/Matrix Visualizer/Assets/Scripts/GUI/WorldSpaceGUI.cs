@@ -7,7 +7,7 @@ public class WorldSpaceGUI : MonoBehaviour
     /// Creates and updates all the matrices for the world space (in order: translation, rz,ry,rx, scaling, identity).
     /// </summary>
     public static WorldSpaceGUI instance;
-    private void Awake() => instance = this;
+    private void Awake() => instance = this;    
     private void Start()
     {
         MatrixGUI identityGUI = transform.GetChild(transform.childCount - 1).GetComponentInChildren<MatrixGUI>();

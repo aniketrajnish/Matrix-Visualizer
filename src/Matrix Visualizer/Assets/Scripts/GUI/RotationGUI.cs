@@ -11,6 +11,8 @@ public class RotationGUI : MonoBehaviour
     /// </summary>
     [SerializeField] TMPro.TMP_InputField[] rInputs;
     MatrixGUI[] mGUI;
+    public static RotationGUI instance;
+    private void Awake() => instance = this;    
     private void Start()
     {
         rInputs[0].onValueChanged.AddListener((string value) => CreateRotXMatrix()); // update the matrix when the user changes the input
@@ -40,6 +42,7 @@ public class RotationGUI : MonoBehaviour
 
         if (WorldSpaceGUI.instance != null) // in case the rot matrices are a part of the world space matrices, update the layout again to put them in the right order
         {
+            print(WorldSpaceGUI.instance.name);
             transform.SetParent(transform.parent.parent, false);
             WorldSpaceGUI.instance.WorldSpaceLayout();            
         }

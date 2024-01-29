@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine.UI;
 using System.Linq;
+using System.Security.Cryptography;
 
 public class CalculationGUI : MonoBehaviour
 {
@@ -200,6 +201,8 @@ public class CalculationGUI : MonoBehaviour
         Instantiate(wstMatrixPrefab, calcGUIParent);
         matrices.Clear();
         matrices = GetComponentsInChildren<MatrixGUI>().ToList();
+        foreach (MatrixGUI mGUI in matrices)
+            print(mGUI.transform.parent.parent.name);
     }
     void CreateOperationDisplay(string operation)
     {
@@ -224,6 +227,17 @@ public class CalculationGUI : MonoBehaviour
         matrices.Clear();
         _resultMatrixHolder = null;
         _operationDisplayHolder = null;
+
+        if (RotationGUI.instance != null)
+        {
+            RotationGUI.instance.gameObject.SetActive(false);
+            Destroy(RotationGUI.instance.gameObject);
+        }
+        if (WorldSpaceGUI.instance != null)
+        {
+            WorldSpaceGUI.instance.gameObject.SetActive(false);
+            Destroy(WorldSpaceGUI.instance.gameObject);
+        }
     }   
     /// <summary>
     /// The functions below are used to calculate the result of the respective operations.
@@ -352,9 +366,8 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndDisplayRotation()
     {
-        Matrix rotationMatrix = matrices[5].matrix * matrices[4].matrix * matrices[3].matrix; // Rz * Ry * Rx  
-        rotationMatrix = matrices[2].matrix * rotationMatrix; // P * Rz * Ry * Rx
-        print(matrices[2].matrix + " " + matrices[5].matrix + " " + matrices[4].matrix + " " + matrices[3].matrix);
+        Matrix rotationMatrix = matrices[3].matrix * matrices[2].matrix * matrices[1].matrix; // Rz * Ry * Rx  
+        rotationMatrix = matrices[0].matrix * rotationMatrix; // P * Rz * Ry * Rx
 
         if (_resultMatrixHolder == null)
         {
@@ -370,8 +383,8 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndDisplayWorldSpaceTransformation()
     {
-        Matrix wstMatrix = ~matrices[7].matrix * matrices[6].matrix * matrices[5].matrix * matrices[4].matrix * matrices[3].matrix * matrices[8].matrix; // T * Rz * Ry * Rx * S * I
-        wstMatrix = matrices[2].matrix * wstMatrix; // P * T * Rz * Ry * Rx * S * I
+        Matrix wstMatrix = ~matrices[5].matrix * matrices[4].matrix * matrices[3].matrix * matrices[2].matrix * matrices[1].matrix * matrices[6].matrix; // T * Rz * Ry * Rx * S * I
+        wstMatrix = matrices[0].matrix * wstMatrix; // P * T * Rz * Ry * Rx * S * I
 
         if (_resultMatrixHolder == null)
         {
