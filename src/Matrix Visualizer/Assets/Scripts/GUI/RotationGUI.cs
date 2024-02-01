@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using MatrixLibrary;
 using System.Linq;
-using System.Collections.Generic;
 
 public class RotationGUI : MonoBehaviour
 {
@@ -36,16 +35,17 @@ public class RotationGUI : MonoBehaviour
         {
             Transform child = transform.GetChild(i);
             child.SetParent(transform.parent, false);
+            child.SetSiblingIndex(i);
         }
 
         transform.SetParent(transform.parent.parent,false);
 
-        if (WorldSpaceGUI.instance != null) // in case the rot matrices are a part of the world space matrices, update the layout again to put them in the right order
+        /*if (WorldSpaceGUI.instance != null) // in case the rot matrices are a part of the world space matrices, update the layout again to put them in the right order
         {
             print(WorldSpaceGUI.instance.name);
             transform.SetParent(transform.parent.parent, false);
             WorldSpaceGUI.instance.WorldSpaceLayout();            
-        }
+        }*/
     }
     void CreateRotXMatrix()
     {

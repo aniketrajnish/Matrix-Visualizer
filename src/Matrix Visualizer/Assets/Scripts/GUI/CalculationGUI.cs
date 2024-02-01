@@ -51,20 +51,23 @@ public class CalculationGUI : MonoBehaviour
             case Operation.TRANSPOSE:
                 TransposeDisplay();
                 break;
+            case Operation.INVERSE:
+                InverseDisplay();
+                break;
             case Operation.EQALITY_CHECK:
                 EqualityCheckDisplay();
                 break;
             case Operation.TRANSLATION:
-                CreateTranslationDisplay();
+                TranslationDisplay();
                 break;
             case Operation.SCALING:
-                CreateScalingDisplay();
+                ScalingDisplay();
                 break;
             case Operation.ROTATION:
-                CreateRotationDisplay();
+                RotationDisplay();
                 break;
             case Operation.WORLD_SPACE_TRANSFORMATION:
-                CreateWorldSpaceTranformationDisplay();
+                WorldSpaceTranformationDisplay();
                 break;
         }
     }
@@ -92,6 +95,9 @@ public class CalculationGUI : MonoBehaviour
                     break;
                 case Operation.TRANSPOSE:
                     CalculateAndDisplayTranspose();
+                    break;
+                case Operation.INVERSE:
+                    CalculateAndDisplayInverse();
                     break;
                 case Operation.EQALITY_CHECK:
                     CalculateAndDisplayEquality();
@@ -152,6 +158,12 @@ public class CalculationGUI : MonoBehaviour
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("T");
     }
+    void InverseDisplay()
+    {
+        _zeroIdentityHolder.SetActive(true);
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        CreateOperationDisplay("I");
+    }
     void EqualityCheckDisplay()
     {  
         _zeroIdentityHolder.SetActive(true);
@@ -159,50 +171,50 @@ public class CalculationGUI : MonoBehaviour
         CreateOperationDisplay("");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
     }
-    void CreateTranslationDisplay()
+    void TranslationDisplay()
     {
         glg.cellSize = new Vector2(400, 400); // only 4x1 and 4x4 matrices so we can reduce the cell size
-        _zeroIdentityHolder.SetActive(false); // no need for the zero and identity matrices
-        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-        matrices[0].vector = new Matrix(new float[1, 4]);
-        CreateOperationDisplay("*");
+        _zeroIdentityHolder.SetActive(false); // no need for the zero and identity matrices        
         matrices.Add(Instantiate(translationMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-        CreateOperationDisplay("T");
+        CreateOperationDisplay("*"); 
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[1].vector = new Matrix(new float[4, 1]);
     }
-    void CreateScalingDisplay()
+    void ScalingDisplay()
     {
         glg.cellSize = new Vector2(400, 400);
         _zeroIdentityHolder.SetActive(false);
-        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-        matrices[0].vector = new Matrix(new float[1, 4]);
-        CreateOperationDisplay("*");
         matrices.Add(Instantiate(scalingMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[1].vector = new Matrix(new float[4, 1]);        
     }
-    void CreateRotationDisplay()
+    void RotationDisplay()
     {
         glg.cellSize = new Vector2(400, 400);
         _zeroIdentityHolder.SetActive(false);
-        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-        matrices[0].vector = new Matrix(new float[1, 4]);
-        CreateOperationDisplay("*");
+        
         Instantiate(rotationMatrixPrefab, calcGUIParent);
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[4, 1]);
         matrices.Clear();
         matrices = GetComponentsInChildren<MatrixGUI>().ToList(); // since more than one matrix in the prefab
         /*foreach (MatrixGUI mGUI in matrices)
             print(mGUI.transform.parent.parent.name);*/
     }
-    void CreateWorldSpaceTranformationDisplay()
+    void WorldSpaceTranformationDisplay()
     {
         glg.cellSize = new Vector2(400, 400);
-        _zeroIdentityHolder.SetActive(false);
-        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-        matrices[0].vector = new Matrix(new float[1, 4]);
-        CreateOperationDisplay("*");
+        _zeroIdentityHolder.SetActive(false);  
         Instantiate(wstMatrixPrefab, calcGUIParent);
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[4, 1]);
         matrices.Clear();
         matrices = GetComponentsInChildren<MatrixGUI>().ToList();
-        foreach (MatrixGUI mGUI in matrices)
-            print(mGUI.transform.parent.parent.name);
+        /*foreach (MatrixGUI mGUI in matrices)
+            print(mGUI.transform.parent.parent.name);*/
     }
     void CreateOperationDisplay(string operation)
     {
@@ -311,7 +323,7 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndDisplayTranspose()
     {
-        Matrix transpose = ~matrices[0].matrix;
+        Matrix transpose = !matrices[0].matrix;
 
         if (_resultMatrixHolder == null)
         {
@@ -325,6 +337,22 @@ public class CalculationGUI : MonoBehaviour
         }
         _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = transpose;
     }
+    void CalculateAndDisplayInverse()
+    {
+        Matrix inverse = ~matrices[0].matrix;
+
+        if (_resultMatrixHolder == null)
+        {
+            CreateOperationDisplay("=");
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        else
+        {
+            Destroy(_resultMatrixHolder);
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = inverse;
+    }
     void CalculateAndDisplayEquality()
     {
         if (matrices[0].matrix == matrices[1].matrix)
@@ -334,7 +362,7 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndDisplayTranslation()
     {
-        Matrix translationMatrix = matrices[0].matrix * ~matrices[1].matrix;
+        Matrix translationMatrix = matrices[0].matrix * matrices[1].matrix;
 
         if (_resultMatrixHolder == null)
         {
@@ -366,8 +394,8 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndDisplayRotation()
     {
-        Matrix rotationMatrix = matrices[3].matrix * matrices[2].matrix * matrices[1].matrix; // Rz * Ry * Rx  
-        rotationMatrix = matrices[0].matrix * rotationMatrix; // P * Rz * Ry * Rx
+        Matrix rotationMatrix = matrices[0].matrix * matrices[1].matrix * matrices[2].matrix; // Rx * Ry * Rz  
+        rotationMatrix = rotationMatrix * matrices[3].matrix; // Rx * Ry * Rz  * P
 
         if (_resultMatrixHolder == null)
         {
@@ -382,9 +410,8 @@ public class CalculationGUI : MonoBehaviour
         _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = rotationMatrix;
     }
     void CalculateAndDisplayWorldSpaceTransformation()
-    {
-        Matrix wstMatrix = ~matrices[5].matrix * matrices[4].matrix * matrices[3].matrix * matrices[2].matrix * matrices[1].matrix * matrices[6].matrix; // T * Rz * Ry * Rx * S * I
-        wstMatrix = matrices[0].matrix * wstMatrix; // P * T * Rz * Ry * Rx * S * I
+    {        
+        Matrix wstMatrix = matrices[0].matrix * matrices[1].matrix; // S * Rx * Ry * Rz * T * I * P
 
         if (_resultMatrixHolder == null)
         {
@@ -438,7 +465,6 @@ public class CalculationGUI : MonoBehaviour
                 else
                     ErrorGUI.instance.ShowError("Only one matrix available!", 2f);
             }
-
     }
         catch (System.Exception ex)
         {

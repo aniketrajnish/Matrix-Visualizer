@@ -37,16 +37,16 @@ namespace MatrixLibrary
             /// <summary>
             /// Homogenizes a given matrix.
             /// </summary>
-            if (m.data == null || m.data.GetLength(0) != 1 || m.data.GetLength(1) == 0)
+            if (m.data == null || m.data.GetLength(1) != 1 || m.data.GetLength(0) == 0)
                 throw new ArgumentException("Invalid vector.");
 
 
-            float[,] result = new float[m.data.GetLength(0), m.data.GetLength(1) + 1];
+            float[,] result = new float[m.data.GetLength(0) + 1, m.data.GetLength(1)];
 
-            for (int i = 0; i < m.data.GetLength(1); i++)
-                result[0, i] = m.data[0, i];
+            for (int i = 0; i < m.data.GetLength(0); i++)
+                result[i, 0] = m.data[i, 0];
 
-            result[0, m.data.GetLength(1)] = 1; // set the last element to 1
+            result[m.data.GetLength(0), 0] = 1; // set the last row to 1
 
             return new Matrix(result);
         }
@@ -133,8 +133,58 @@ namespace MatrixLibrary
         { (float)Math.Sin(deg2Rad(angle)), (float)Math.Cos(deg2Rad(angle)), 0 },
         { 0, 0, 1 } }));
         /// <summary>
+        /// Creates a 3D rotation matrix for x , y and z axes.
+        /// </summary>        
+        public static Matrix rotation3D(float? angleX = null, float? angleY = null, float? angleZ = null) 
+        => rotation3Dx(angleX ?? 0) * rotation3Dy(angleY ?? 0) * rotation3Dz(angleZ ?? 0);
+        /// <summary>
         /// Method to concatenate matrices by multiplying them.
         /// </summary>
-        public static Matrix Concatenation(Matrix m, Matrix[] ms) => ms.Aggregate(m, (acc, next) => acc * next);
+        public static Matrix Concatenation(Matrix[] ms) => ms.Aggregate((first, second) => first * second);
+        public static Matrix WorldSpaceTransformMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
+        {
+            /// <summary>
+            /// Returns the world space transformation matrix for the given translation, scaling and rotation vectors.
+            /// WST = S * R * T * I = S * Rx * Ry * Rz * T * i
+            /// </summary>
+
+            if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
+                throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
+
+            Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
+            Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
+
+            // Ensure rs has enough values for rotation or default to no rotation
+            float angleX = (rs != null) ? rs[0] : 0f;
+            float angleY = (rs != null) ? rs[1] : 0f;
+            float angleZ = (rs != null) ? rs[2] : 0f;
+
+            Matrix r = MatrixHelpers.rotation3Dx(angleX) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dz(angleZ);
+            Matrix i = Matrix.identity(4); // why tho
+
+            return MatrixHelpers.Concatenation(new Matrix[] {s, r, t, i});
+        }
+        public static void Pivot(float[,] augmentedMatrix, int i)
+        {
+            /// <summary>
+            /// Pivots the augmented matrix to make the diagonal element of the current row 1.
+            /// </summary>
+            int n = augmentedMatrix.GetLength(0);
+            float diagonal = augmentedMatrix[i, i];
+
+            for (int j = 0; j < 2 * n; j++)
+                augmentedMatrix[i, j] /= diagonal; // divide the current row by the diagonal element
+
+            for (int k = 0; k < n; k++)
+            {
+                if (k != i)
+                {
+                    float factor = augmentedMatrix[k, i];
+
+                    for (int j = 0; j < 2 * n; j++)
+                        augmentedMatrix[k, j] -= factor * augmentedMatrix[i, j]; // subtract the factor times the current row from the other rows
+                }
+            }
+        }
     }   
 }

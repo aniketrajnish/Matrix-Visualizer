@@ -137,10 +137,10 @@ namespace MatrixLibrary
 
             return new Matrix(result);
         }
-        public static Matrix operator ~(Matrix m)
+        public static Matrix operator !(Matrix m)
         {
             /// <summary>
-            /// Overloads the ~ operator to transpose a matrix.
+            /// Overloads the ! operator to transpose a matrix.
             /// </summary>
             int rows = m.data.GetLength(0);
             int cols = m.data.GetLength(1);
@@ -152,6 +152,56 @@ namespace MatrixLibrary
 
             return new Matrix(transposedData);
         }
+        public static Matrix operator ~(Matrix m)
+        {
+            /// <summary>
+            /// Overloads the ~ operator to find the inverse of a matrix.S
+            /// </summary>
+            if (m.data.GetLength(0) != m.data.GetLength(1))
+                throw new ArgumentException("The matrix must be square to find its inverse.");
+
+            int n = m.data.GetLength(0);
+            float[,] result = new float[n, n];
+            float[,] augmentedMatrix = new float[n, 2 * n];
+
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    augmentedMatrix[i, j] = m.data[i, j]; // copy the matrix to the left side of the augmented matrix
+
+            for (int i = 0; i < n; i++)
+                augmentedMatrix[i, i + n] = 1; // set the right side of the augmented matrix to the identity matrix
+
+            for (int i = 0; i < n; i++)
+            {
+                MatrixHelpers.Pivot(augmentedMatrix, i); // pivot the augmented matrix
+
+                float diagonal = augmentedMatrix[i, i];
+
+                if (Math.Abs(diagonal) < 1e-10) // if the diagonal element is zero
+                    throw new ArgumentException("The matrix is singular and does not have an inverse.");
+
+                for (int j = 0; j < 2 * n; j++)
+                    augmentedMatrix[i, j] /= diagonal; // divide the current row by the diagonal element
+
+                for (int k = 0; k < n; k++)
+                {
+                    if (k != i)
+                    {
+                        float factor = augmentedMatrix[k, i];
+
+                        for (int j = 0; j < 2 * n; j++)
+                            augmentedMatrix[k, j] -= factor * augmentedMatrix[i, j]; // subtract the factor times the current row from the other rows
+                    }
+                }                
+            }
+
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    result[i, j] = augmentedMatrix[i, j + n]; // copy the right side of the augmented matrix to the result matrix
+
+            return new Matrix(result);
+
+        }        
         public Matrix TranslateMatrix(float[] t)
         {
             /// <summary>
@@ -164,7 +214,7 @@ namespace MatrixLibrary
 
             Matrix translationMatrix = MatrixHelpers.translationMatrix(t);
 
-            return MatrixHelpers.HomogenizeVector(this) * ~translationMatrix;
+            return translationMatrix * MatrixHelpers.HomogenizeVector(this);
         }
         public Matrix ScaleMatrix(float[] s)
         {
@@ -178,7 +228,7 @@ namespace MatrixLibrary
 
             Matrix scalingMatrix = MatrixHelpers.scalingMatrix(s);
 
-            return MatrixHelpers.HomogenizeVector(this) * scalingMatrix;
+            return scalingMatrix * MatrixHelpers.HomogenizeVector(this);
         }
         public Matrix Rotate2D(float angle)
         {
@@ -190,44 +240,29 @@ namespace MatrixLibrary
 
             Matrix rotationMatrix = MatrixHelpers.rotation2D(angle);
 
-            return this * rotationMatrix;
+            return rotationMatrix * this;
         }
         public Matrix Rotate3D(float? rx = null, float? ry = null, float? rz = null)
         {
             /// <summary>
             /// Rotates the given matrix by the given angles about the x, y and z axes respectively.
             /// </summary>
-            if (data.GetLength(0) != 1 || data.GetLength(1) != 3)
+            if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
                 throw new ArgumentException("The matrix must be a 3D vector for 3D rotation.");
 
-            Matrix rotationMatrix = MatrixHelpers.rotation3Dx(rx ?? 0) * MatrixHelpers.rotation3Dy(ry ?? 0) * MatrixHelpers.rotation3Dz(rz ?? 0); // the total rotation matrix is basically the product of the three rotation matrices
-
-            return MatrixHelpers.HomogenizeVector(this) * rotationMatrix;
+            return MatrixHelpers.rotation3D(rx, ry, rz) * MatrixHelpers.HomogenizeVector(this);
         }
-        public Matrix WorldSpaceMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
+        public Matrix WorldSpaceTransformation(float[] ts = null, float[] ss = null, float[] rs = null)
         {
             /// <summary>
-            /// Returns the world space transformation matrix for the given translation, scaling and rotation vectors.
+            /// Returns the world space transformation of this matrix
             /// P = T * Rz * Ry * Rx * S * I * p
-            /// Performs pre-multiplication of the given matrix with the given translation, scaling and rotation vectors.
+            /// Performs post-multiplication of the given matrix with the given translation, scaling and rotation vectors.
             /// </summary>
-            if (data.GetLength(0) != 1 || data.GetLength(1) != 4)
+            if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
                 throw new ArgumentException("The original matrix must be 1x4 for world space transformations.");
 
-            if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
-                throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
-
-            Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
-            Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
-
-            // Ensure rs has enough values for rotation or default to no rotation
-            float rx = (rs != null) ? rs[0] : 0f;
-            float ry = (rs != null) ? rs[1] : 0f;
-            float rz = (rs != null) ? rs[2] : 0f;
-            Matrix r = MatrixHelpers.rotation3Dz(rz) * MatrixHelpers.rotation3Dy(ry) * MatrixHelpers.rotation3Dx(rx);
-            Matrix i = Matrix.identity(4); // why tho
-
-            return MatrixHelpers.Concatenation(this, new Matrix[] { ~t, r, s, i });
+            return MatrixHelpers.WorldSpaceTransformMatrix(ts, ss, rs) * MatrixHelpers.HomogenizeVector(this);
         }
         public static bool operator ==(Matrix m1, Matrix m2)
         {

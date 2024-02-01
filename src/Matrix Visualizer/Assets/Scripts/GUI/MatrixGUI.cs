@@ -112,15 +112,15 @@ public class MatrixGUI : MonoBehaviour
         /// </summary>
         try
         {
-            rows = 1;
-            columns = value.data.GetLength(1);
+            rows = value.data.GetLength(0);
+            columns = 1;
 
             CreateVectorUI();
 
             TMP_InputField[] inputFields = GetComponentsInChildren<TMP_InputField>();
 
-            for (int i = 0; i < columns-1; i++)            
-                inputFields[i].text = value.data[0, i].ToString();            
+            for (int i = 0; i < rows - 1; i++)            
+                inputFields[i].text = value.data[i, 0].ToString();            
         }
         catch (ArgumentException ex)
         {
@@ -161,10 +161,10 @@ public class MatrixGUI : MonoBehaviour
     void CreateVectorUI()
     {
         /// <summary>
-        /// Similar to CreateMatrixUI() but for a 4 x 1 matrix. (again just for more clarity)
+        /// Similar to CreateMatrixUI() but for a 5 x 1 matrix. (again just for more clarity)
         /// </summary>
-        columns = 4;
-        rows = 1;
+        columns = 1;
+        rows = 4;
 
         foreach (Transform child in transform)
         {
@@ -174,10 +174,10 @@ public class MatrixGUI : MonoBehaviour
 
         glg.constraintCount = columns;
 
-        for (int i = 0; i < columns; i++)
+        for (int i = 0; i < rows; i++)
         {
             TMP_InputField tempInputField =  Instantiate(inputField, transform).GetComponent<TMP_InputField>();
-            if (i == columns - 1)
+            if (i == rows - 1)
             {
                 tempInputField.text = "1";
                 tempInputField.interactable = false;
