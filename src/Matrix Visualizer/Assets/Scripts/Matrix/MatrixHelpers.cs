@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// Hey Chris, I've written every class in one file right now. (This is not a good practice though)
 /// I did it so that you can easily run and test the code in any online C# compiler without having to install C# locally.
 /// You can test here: https://www.programiz.com/csharp-programming/online-compiler/
@@ -141,11 +141,11 @@ namespace MatrixLibrary
         /// Method to concatenate matrices by multiplying them.
         /// </summary>
         public static Matrix Concatenation(Matrix[] ms) => ms.Aggregate((first, second) => first * second);
-        public static Matrix WorldSpaceTransformMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
+        public static Matrix WorldSpaceTransformationMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
         {
             /// <summary>
             /// Returns the world space transformation matrix for the given translation, scaling and rotation vectors.
-            /// WST = S * R * T * I = S * Rx * Ry * Rz * T * i
+            /// WST = T * R * S * I = T * Rz * Ry * Rx * S * I
             /// </summary>
 
             if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
@@ -154,7 +154,6 @@ namespace MatrixLibrary
             Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
             Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
 
-            // Ensure rs has enough values for rotation or default to no rotation
             float angleX = (rs != null) ? rs[0] : 0f;
             float angleY = (rs != null) ? rs[1] : 0f;
             float angleZ = (rs != null) ? rs[2] : 0f;
@@ -162,7 +161,66 @@ namespace MatrixLibrary
             Matrix r = MatrixHelpers.rotation3Dx(angleX) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dz(angleZ);
             Matrix i = Matrix.identity(4); // why tho
 
+            return MatrixHelpers.Concatenation(new Matrix[] {t, r, s, i});
+        }
+        public static Matrix ObjectSpaceTransformationMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
+        {
+            /// <summary>
+            /// Returns the object space transformation matrix for the given translation, scaling and rotation vectors.
+            /// OST = S * R * T * I = S * Rx * Ry * Rz * T * i
+            /// </summary>                   
+            if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
+                throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
+
+            Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
+            Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
+
+            float angleX = (rs != null) ? rs[0] : 0f;
+            float angleY = (rs != null) ? rs[1] : 0f;
+            float angleZ = (rs != null) ? rs[2] : 0f;
+
+            Matrix r = MatrixHelpers.rotation3Dz(angleZ) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dx(angleX);
+            Matrix i = Matrix.identity(4); // why tho
+
             return MatrixHelpers.Concatenation(new Matrix[] {s, r, t, i});
+        }
+        /// <summary>
+        /// Returns the camera space matrix based on the camera's world space transformation matrix.
+        /// CSM = (WST)⁻¹
+        /// </summary>
+        public static Matrix CameraViewSpaceMatrix(Matrix cameraWST) => ~cameraWST;
+        public static Matrix PerspectiveProjectionMatrix(float fov, float aspect, float near, float far)
+        {
+            /// <summary>
+            /// Returns the perspective projection matrix for the given field of view, aspect ratio, near and far planes.
+            /// </summary>            
+            float f = 1 / (float)Math.Tan(deg2Rad(fov) / 2);
+            float z1 = -(far + near) / (far - near);
+            float z2 = -2 * far * near / (far - near);
+
+            return new Matrix(new float[,]
+                           { { f / aspect, 0,      0,       0 },
+                             { 0,          f,      0,       0 },
+                             { 0,          0,     z1,      z2 },
+                             { 0,          0,     -1,       0 } });
+        }
+        public static Matrix OrthographicProjectionMatrix(float left, float right, float bottom, float top, float near, float far)
+        {
+            /// <summary>
+            /// Returns the orthographic projection matrix for the given left, right, bottom, top, near and far planes.
+            /// </summary>            
+            float m1 = 2 / (right - left);
+            float m2 = 2 / (top - bottom);
+            float m3 = -2 / (far - near);
+            float n1 = -(right + left) / (right - left);
+            float n2 = -(top + bottom) / (top - bottom);
+            float n3 = -(far + near) / (far - near);
+
+            return new Matrix(new float[,]
+                           { { m1, 0, 0, n1 },
+                             { 0, m2, 0, n2 },
+                             { 0, 0, m3, n3 },
+                             { 0, 0,  0,  1 } });
         }
         public static void Pivot(float[,] augmentedMatrix, int i)
         {

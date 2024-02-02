@@ -256,13 +256,57 @@ namespace MatrixLibrary
         {
             /// <summary>
             /// Returns the world space transformation of this matrix
-            /// P = T * Rz * Ry * Rx * S * I * p
+            /// P = T * Rx * Ry * Rz * S * I * p
             /// Performs post-multiplication of the given matrix with the given translation, scaling and rotation vectors.
             /// </summary>
             if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
-                throw new ArgumentException("The original matrix must be 1x4 for world space transformations.");
+                throw new ArgumentException("The original matrix must be 1x4 for world space transformation.");
 
-            return MatrixHelpers.WorldSpaceTransformMatrix(ts, ss, rs) * MatrixHelpers.HomogenizeVector(this);
+            return MatrixHelpers.WorldSpaceTransformationMatrix(ts, ss, rs) * MatrixHelpers.HomogenizeVector(this);
+        }
+        public Matrix ObjectSpaceTransformation(float[] ts = null, float[] ss = null, float[] rs = null)
+        {
+            /// <summary>
+            /// Returns the object space transformation of this matrix
+            /// P = S * Rx * Ry * Rz * T * I * p
+            /// Performs post-multiplication of the given matrix with the given translation, scaling and rotation vectors.
+            if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
+                throw new ArgumentException("The original matrix must be 1x4 for object space transformation.");
+
+            return MatrixHelpers.ObjectSpaceTransformationMatrix(ts, ss, rs) * MatrixHelpers.HomogenizeVector(this);
+        }
+        public Matrix CameraViewSpaceTransformation(Matrix camWSTMatrix)
+        {
+            /// <summary>
+            /// Returns the camera view space transformation of this matrix
+            /// </summary>            
+            if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
+                throw new ArgumentException("The original matrix must be 1x4 for camera view space transformation.");
+            
+            if (camWSTMatrix.data.GetLength(0) != 4 || camWSTMatrix.data.GetLength(1) != 4)
+                throw new ArgumentException("The camera world space transformation matrix must be 4x4.");
+
+            return MatrixHelpers.CameraViewSpaceMatrix(camWSTMatrix) * MatrixHelpers.HomogenizeVector(this);
+        }
+        public Matrix PerspectiveProjection(float fov, float aspect, float near, float far)
+        {
+            /// <summary>
+            /// Returns the perspective projection of this matrix
+            /// </summary>
+             if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
+                throw new ArgumentException("The original matrix must be 1x4 for perspective projection.");
+
+             return MatrixHelpers.PerspectiveProjectionMatrix(fov, aspect, near, far) * MatrixHelpers.HomogenizeVector(this);
+        }
+        public Matrix OrthographicProjection(float left, float right, float bottom, float top, float near, float far)
+        {
+            /// <summary>
+            /// Returns the orthographic projection of this matrix
+            /// </summary>
+            if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
+                throw new ArgumentException("The original matrix must be 1x4 for orthographic projection.");
+                                      
+             return MatrixHelpers.OrthographicProjectionMatrix(left, right, bottom, top, near, far) * MatrixHelpers.HomogenizeVector(this);
         }
         public static bool operator ==(Matrix m1, Matrix m2)
         {

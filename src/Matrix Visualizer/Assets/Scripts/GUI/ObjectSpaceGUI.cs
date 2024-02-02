@@ -3,12 +3,12 @@ using MatrixLibrary;
 using TMPro;
 using System.Linq;
 
-public class WorldSpaceGUI : MonoBehaviour
+public class ObjectSpaceGUI : MonoBehaviour
 {
     /// <summary>
-    /// Creates and updates all the matrices for the world space transformation (in order: scaling, rx, ry, rz, translation, identity).
+    /// Creates and updates all the matrices for the object space transformation (in order: translation, rz,ry,rx, scaling, identity).
     /// </summary>
-    public static WorldSpaceGUI instance;
+    public static ObjectSpaceGUI instance;
     private void Awake() => instance = this;
     [SerializeField] TMP_InputField[] sInputs, rInputs, tInputs;
     private void Start()
@@ -16,17 +16,17 @@ public class WorldSpaceGUI : MonoBehaviour
         /*MatrixGUI identityGUI = transform.GetChild(transform.childCount - 1).GetComponentInChildren<MatrixGUI>();
         identityGUI.matrix = Matrix.identity(4);*/        
         foreach (var input in sInputs.Concat(rInputs).Concat(tInputs))
-            input.onValueChanged.AddListener((string value) => UpdateWorldSpaceMatrix());
-        UpdateWorldSpaceMatrix();
+            input.onValueChanged.AddListener((string value) => UpdateObjectSpaceMatrix());
+        UpdateObjectSpaceMatrix();
     }
-    public void UpdateWorldSpaceMatrix()
+    public void UpdateObjectSpaceMatrix()
     {
         float[] ss = sInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
         float[] rs = rInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
         float[] ts = tInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
 
-        Matrix wstMatrix = MatrixHelpers.WorldSpaceTransformationMatrix(ts,ss,rs);
-        GetComponentInChildren<MatrixGUI>().matrix = wstMatrix;
+        Matrix ostMatrix = MatrixHelpers.ObjectSpaceTransformationMatrix(ts,ss,rs);
+        GetComponentInChildren<MatrixGUI>().matrix = ostMatrix;
     }
     /*public void WorldSpaceLayout()
     {
