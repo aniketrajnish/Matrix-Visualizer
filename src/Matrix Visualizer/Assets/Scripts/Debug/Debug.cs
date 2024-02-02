@@ -13,7 +13,7 @@ public class Debug : MonoBehaviour
     {
         /*print("W2L" + transform.worldToLocalMatrix); 
         print("L2W" + transform.localToWorldMatrix);*/ 
-        print("L2W\n" + Matrix4x4.Inverse(Camera.main.transform.localToWorldMatrix));
-        print("VM\n" + Camera.main.worldToCameraMatrix);
+        /*print("L2W\n" + Matrix4x4.Inverse(Camera.main.transform.localToWorldMatrix));
+        print("VM\n" + Camera.main.worldToCameraMatrix);*/
     }
 }

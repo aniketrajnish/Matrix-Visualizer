@@ -17,7 +17,7 @@ public class CalculationGUI : MonoBehaviour
     [SerializeField] OperationGUI opGUI;
     [SerializeField] GameObject scalarPrefab, matrixPrefab, operationDisplayPrefab, 
         translationMatrixPrefab, scalingMatrixPrefab, rotationMatrixPrefab, wstMatrixPrefab,
-        ostMatrixPrefab, cvsMatrixPrefab;
+        ostMatrixPrefab, cvsMatrixPrefab, projectionMatrixPrefab;
     [SerializeField] GameObject _zeroMatrixHolder, _identityMatrixHolder, _zeroIdentityHolder;
     GameObject _scalarHolder, _resultMatrixHolder, _operationDisplayHolder; 
     Transform calcGUIParent;
@@ -75,7 +75,10 @@ public class CalculationGUI : MonoBehaviour
                 ObjectSpaceTransformationDisplay();
                 break;
             case Operation.CAMERA_VIEW_SPACE:
-                CameraViewSpaceMatrixDisplay();
+                CameraViewSpaceDisplay();
+                break;
+            case Operation.PROJECTION:
+                ProjectionDisplay();
                 break;
         }
     }
@@ -127,6 +130,9 @@ public class CalculationGUI : MonoBehaviour
                     break;
                 case Operation.CAMERA_VIEW_SPACE:
                     CalculateAndDisplayCameraViewSpaceMatrix();
+                    break;
+                case Operation.PROJECTION:
+                    CalculateAndDisplayProjectionMatrix();
                     break;
             }
         }
@@ -241,7 +247,7 @@ public class CalculationGUI : MonoBehaviour
         matrices.Clear();
         matrices = GetComponentsInChildren<MatrixGUI>().ToList();
     }
-    void CameraViewSpaceMatrixDisplay()
+    void CameraViewSpaceDisplay()
     {
         glg.cellSize = new Vector2(400, 400);
         _zeroIdentityHolder.SetActive(false);
@@ -251,6 +257,18 @@ public class CalculationGUI : MonoBehaviour
         matrices[0].vector = new Matrix(new float[4, 1]);
         matrices.Clear();
         matrices = GetComponentsInChildren<MatrixGUI>().ToList();
+    }
+    void ProjectionDisplay()
+    {
+        glg.cellSize = new Vector2(400, 400);
+        _zeroIdentityHolder.SetActive(false);
+        Instantiate(projectionMatrixPrefab, calcGUIParent);
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+        matrices[0].vector = new Matrix(new float[4, 1]);
+        matrices.Clear();
+        matrices = GetComponentsInChildren<MatrixGUI>().ToList();
+
     }
     void CreateOperationDisplay(string operation)
     {
@@ -492,6 +510,22 @@ public class CalculationGUI : MonoBehaviour
             _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
         }
         _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = cvsMatrix;
+    }
+    void CalculateAndDisplayProjectionMatrix()
+    {
+        Matrix projectionMatrix = matrices[0].matrix * matrices[1].matrix; 
+
+        if (_resultMatrixHolder == null)
+        {
+            CreateOperationDisplay("=");
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        else
+        {
+            Destroy(_resultMatrixHolder);
+            _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
+        }
+        _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = projectionMatrix;
     }
     public void CreateZeroIdentityMatrix()
     {

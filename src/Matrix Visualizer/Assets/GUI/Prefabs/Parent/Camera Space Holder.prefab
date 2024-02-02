@@ -945,7 +945,7 @@ GameObject:
   - component: {fileID: 2511035264264513847}
   - component: {fileID: 4804612594220960162}
   m_Layer: 0
-  m_Name: Camera Space Matrix
+  m_Name: Camera Space Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

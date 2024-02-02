@@ -639,7 +639,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5462060970703383481}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -940,7 +940,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 884332734667878674, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 40.55
       objectReference: {fileID: 0}
     - target: {fileID: 884332734667878674, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
       propertyPath: m_fontSizeBase
@@ -968,7 +968,7 @@ PrefabInstance:
       objectReference: {fileID: 4019842119619729123}
     - target: {fileID: 3976707406289287467, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
       propertyPath: m_fontSize
-      value: 40
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 3976707406289287467, guid: 1fe847714ccc49447914396c13db39c5, type: 3}
       propertyPath: m_fontSizeBase
