@@ -28,11 +28,19 @@ public class ScalingGUI : MonoBehaviour
         /// <summary>
         /// Creates a scaling matrix based on the user input.
         /// </summary>
-        float xVal = string.IsNullOrEmpty(sInputs[0].text) ? 0f : float.Parse(sInputs[0].text);
-        float yVal = string.IsNullOrEmpty(sInputs[1].text) ? 0f : float.Parse(sInputs[1].text);
-        float zVal = string.IsNullOrEmpty(sInputs[2].text) ? 0f : float.Parse(sInputs[2].text);
+        float xVal = string.IsNullOrEmpty(sInputs[0].text) ? 1f : float.Parse(sInputs[0].text);
+        float yVal = string.IsNullOrEmpty(sInputs[1].text) ? 1f : float.Parse(sInputs[1].text);
+        float zVal = string.IsNullOrEmpty(sInputs[2].text) ? 1f : float.Parse(sInputs[2].text);
 
         Matrix scalingMatrix = MatrixHelpers.scalingMatrix(new float[] { xVal, yVal, zVal });
         mGUI.matrix = scalingMatrix;
+
+        if (WorldSpaceGUI.instance != null)
+            for (int i = 0; i < 3; i++)
+                WorldSpaceGUI.instance.sCombInputs[i].text = (string.IsNullOrEmpty(sInputs[i].text) ? 1f : float.Parse(sInputs[i].text)).ToString();
+
+        if (ObjectSpaceGUI.instance != null)
+            for (int i = 0; i < 3; i++)
+                ObjectSpaceGUI.instance.sCombInputs[i].text = (string.IsNullOrEmpty(sInputs[i].text) ? 1f : float.Parse(sInputs[i].text)).ToString();
     }
 }

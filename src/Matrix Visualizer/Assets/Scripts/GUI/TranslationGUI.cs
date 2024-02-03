@@ -34,5 +34,13 @@ public class TranslationGUI : MonoBehaviour
 
         Matrix translationMatrix = MatrixHelpers.translationMatrix(new float[] { xVal, yVal, zVal });
         mGUI.matrix = translationMatrix;
+
+        if (WorldSpaceGUI.instance != null)        
+            for (int i = 0; i < 3; i++)
+                WorldSpaceGUI.instance.tCombInputs[i].text = (string.IsNullOrEmpty(tInputs[i].text) ? 0f : float.Parse(tInputs[i].text)).ToString();
+
+        if (ObjectSpaceGUI.instance != null)
+            for (int i = 0; i < 3; i++)
+                ObjectSpaceGUI.instance.tCombInputs[i].text = (string.IsNullOrEmpty(tInputs[i].text) ? 0f : float.Parse(tInputs[i].text)).ToString();
     }
 }

@@ -3216,7 +3216,7 @@ MonoBehaviour:
   scalingMatrixPrefab: {fileID: 6214769277555650873, guid: 00b54175189c0e94890e0b20f5e45a1b, type: 3}
   rotationMatrixPrefab: {fileID: 7311437845355063532, guid: 199fc14c98068f842823e2132ff88f5c, type: 3}
   wstMatrixPrefab: {fileID: 5330809615511284153, guid: 2e236e2a3b9bacd44b0e198e6d897c3c, type: 3}
-  ostMatrixPrefab: {fileID: 5330809615511284153, guid: 091167a80f1cc6443b3a991710a6c71a, type: 3}
+  ostMatrixPrefab: {fileID: 5330809615511284153, guid: 8b4a69b1bbaed6443987573286f0e682, type: 3}
   cvsMatrixPrefab: {fileID: 5330809615511284153, guid: e5e40e60392846b44a820818769ab8fe, type: 3}
   projectionMatrixPrefab: {fileID: 5330809615511284153, guid: 7c6b608fdb98ebb42b1acd09cc097192, type: 3}
   _zeroMatrixHolder: {fileID: 2091704536}

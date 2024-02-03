@@ -42,22 +42,7 @@ public class RotationGUI : MonoBehaviour
         CreateRotYMatrix();
         CreateRotZMatrix();
 
-        UpdateVisibiliy();
-        /*for (int i = transform.childCount - 1; i >= 0; i--) // unparent to move them within the layout and put the GUI in the right order
-        {
-            Transform child = transform.GetChild(i);
-            child.SetParent(transform.parent, false);
-            child.SetSiblingIndex(i);
-        }
-
-        transform.SetParent(transform.parent.parent,false);*/
-
-        /*if (WorldSpaceGUI.instance != null) // in case the rot matrices are a part of the world space matrices, update the layout again to put them in the right order
-        {
-            print(WorldSpaceGUI.instance.name);
-            transform.SetParent(transform.parent.parent, false);
-            WorldSpaceGUI.instance.WorldSpaceLayout();            
-        }*/
+        UpdateVisibiliy();        
     }
     void CreateRotMatrix()
     {
@@ -77,13 +62,18 @@ public class RotationGUI : MonoBehaviour
             Matrix rotMatrix = MatrixHelpers.rotation3D(xVal, yVal, zVal);
 
             combMGUI.matrix = rotMatrix;
-            mGUIs[0].matrix = MatrixHelpers.rotation3Dx(xVal);
-            mGUIs[1].matrix = MatrixHelpers.rotation3Dy(yVal);
-            mGUIs[2].matrix = MatrixHelpers.rotation3Dz(zVal);
+
+            if (WorldSpaceGUI.instance != null)
+                for (int i = 0; i < 3; i++)
+                    WorldSpaceGUI.instance.rCombInputs[i].text = (string.IsNullOrEmpty(rCombInputs[i].text) ? 0f : float.Parse(rCombInputs[i].text)).ToString();
+
+            if (ObjectSpaceGUI.instance != null)
+                for (int i = 0; i < 3; i++)
+                    ObjectSpaceGUI.instance.rCombInputs[i].text = (string.IsNullOrEmpty(rCombInputs[i].text) ? 0f : float.Parse(rCombInputs[i].text)).ToString();
         }
         catch (System.Exception ex)
         {
-            //ErrorGUI.instance.ShowError(ex.Message, 2f);
+            ErrorGUI.instance.ShowError(ex.Message, 2f);
         }
     }
     public void UpdateVisibiliy()
@@ -95,12 +85,12 @@ public class RotationGUI : MonoBehaviour
 
         if (isExpanded)
         {
-            rotMatrices[1].transform.SetParent(transform.parent, false);
-            rotMatrices[1].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
-            operationHolders[0].transform.SetParent(transform.parent, false);
-            operationHolders[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             rotMatrices[2].transform.SetParent(transform.parent, false);
             rotMatrices[2].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            operationHolders[0].transform.SetParent(transform.parent, false);
+            operationHolders[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            rotMatrices[1].transform.SetParent(transform.parent, false);
+            rotMatrices[1].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             operationHolders[1].transform.SetParent(transform.parent, false);
             operationHolders[1].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
 
@@ -131,7 +121,12 @@ public class RotationGUI : MonoBehaviour
             Matrix rotXMatrix = MatrixHelpers.rotation3Dx(xVal);
 
             mGUIs[0].matrix = rotXMatrix;
-            combMGUI.matrix = mGUIs[0].matrix * mGUIs[1].matrix * mGUIs[2].matrix;
+
+            if (WorldSpaceGUI.instance != null)
+                WorldSpaceGUI.instance.rCombInputs[0].text = xVal.ToString();
+
+            if (ObjectSpaceGUI.instance != null)
+                ObjectSpaceGUI.instance.rCombInputs[0].text = xVal.ToString();
         }
         catch (System.Exception ex)
         {
@@ -151,7 +146,12 @@ public class RotationGUI : MonoBehaviour
             Matrix rotYMatrix = MatrixHelpers.rotation3Dy(yVal);
 
             mGUIs[1].matrix = rotYMatrix;
-            combMGUI.matrix = mGUIs[0].matrix * mGUIs[1].matrix * mGUIs[2].matrix;
+
+            if (WorldSpaceGUI.instance != null)
+                WorldSpaceGUI.instance.rCombInputs[1].text = yVal.ToString();
+
+            if (ObjectSpaceGUI.instance != null)
+                ObjectSpaceGUI.instance.rCombInputs[1].text = yVal.ToString();
         }
         catch (System.Exception ex)
         {
@@ -171,7 +171,12 @@ public class RotationGUI : MonoBehaviour
             Matrix rotZMatrix = MatrixHelpers.rotation3Dz(zVal);
 
             mGUIs[2].matrix = rotZMatrix;
-            combMGUI.matrix = mGUIs[0].matrix * mGUIs[1].matrix * mGUIs[2].matrix;
+
+            if (WorldSpaceGUI.instance != null)
+                WorldSpaceGUI.instance.rCombInputs[2].text = zVal.ToString();
+
+            if (ObjectSpaceGUI.instance != null)
+                ObjectSpaceGUI.instance.rCombInputs[2].text = zVal.ToString();
         }
         catch (System.Exception ex)
         {

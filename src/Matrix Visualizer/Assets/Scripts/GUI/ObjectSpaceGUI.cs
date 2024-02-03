@@ -6,44 +6,74 @@ using System.Linq;
 public class ObjectSpaceGUI : MonoBehaviour
 {
     /// <summary>
-    /// Creates and updates all the matrices for the object space transformation (in order: translation, rz,ry,rx, scaling, identity).
+    /// Redefinition of the WorldSpaceGUI class, but to handle the object space transformation.
     /// </summary>
     public static ObjectSpaceGUI instance;
+    [SerializeField] TextMeshProUGUI expandBtnText;
     private void Awake() => instance = this;
-    [SerializeField] TMP_InputField[] sInputs, rInputs, tInputs;
+    [SerializeField] public TMP_InputField[] sCombInputs, rCombInputs, tCombInputs, sInputs, rInputs, tInputs;
+    [SerializeField] GameObject[] operationHolders;
+    [SerializeField] GameObject combMatrix, sMatrix, rMatrix, tMatrix;
+    bool isExpanded = false;
     private void Start()
     {
-        /*MatrixGUI identityGUI = transform.GetChild(transform.childCount - 1).GetComponentInChildren<MatrixGUI>();
-        identityGUI.matrix = Matrix.identity(4);*/        
-        foreach (var input in sInputs.Concat(rInputs).Concat(tInputs))
+        foreach (var input in sCombInputs.Concat(rCombInputs).Concat(tCombInputs))
             input.onValueChanged.AddListener((string value) => UpdateObjectSpaceMatrix());
+
         UpdateObjectSpaceMatrix();
+        UpdateVisibility();
     }
     public void UpdateObjectSpaceMatrix()
     {
-        float[] ss = sInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
-        float[] rs = rInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
-        float[] ts = tInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
+        float[] ss = sCombInputs.Select(input => string.IsNullOrEmpty(input.text) ? 1f : float.Parse(input.text)).ToArray();
+        float[] rs = rCombInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
+        float[] ts = tCombInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
 
-        Matrix ostMatrix = MatrixHelpers.ObjectSpaceTransformationMatrix(ts,ss,rs);
-        GetComponentInChildren<MatrixGUI>().matrix = ostMatrix;
+        for (int i = 0; i < 3; i++)
+        {
+            print(ss[i]);
+            sInputs[i].text = ss[i].ToString();
+            rInputs[i].text = rs[i].ToString();
+            tInputs[i].text = ts[i].ToString();
+        }
+
+        Matrix wstMatrix = MatrixHelpers.ObjectSpaceTransformationMatrix(ts, ss, rs);
+        combMatrix.GetComponentInChildren<MatrixGUI>().matrix = wstMatrix;
     }
-    /*public void WorldSpaceLayout()
+    public void UpdateVisibility()
     {
-        transform.GetChild(3).SetParent(transform.parent, false); // lots of magic numbers here, but it works and gets the GUI in the right order
-        transform.GetChild(2).SetParent(transform.parent, false);
+        combMatrix.SetActive(!isExpanded);
 
-        transform.GetChild(4).SetParent(transform.parent, false);
-        transform.GetChild(4).SetParent(transform.parent, false);
-        transform.GetChild(4).SetParent(transform.parent, false);
-        transform.GetChild(4).SetParent(transform.parent, false);
-        transform.GetChild(4).SetParent(transform.parent, false);
+        foreach (GameObject go in operationHolders)
+            go.SetActive(isExpanded);
 
-        transform.GetChild(1).SetParent(transform.parent, false);
-        transform.GetChild(0).SetParent(transform.parent, false);
-        transform.GetChild(0).SetParent(transform.parent, false);
-        transform.GetChild(0).SetParent(transform.parent, false);
+        sMatrix.SetActive(isExpanded);
+        rMatrix.SetActive(isExpanded);
+        tMatrix.SetActive(isExpanded);
 
-        transform.SetParent(transform.parent.parent, false);
-    }*/    
+        if (isExpanded)
+        {
+            sMatrix.transform.SetParent(transform.parent, false);
+            sMatrix.transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            operationHolders[0].transform.SetParent(transform.parent, false);
+            operationHolders[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            rMatrix.transform.SetParent(transform.parent, false);
+            rMatrix.transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            operationHolders[1].transform.SetParent(transform.parent, false);
+            operationHolders[1].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+
+            expandBtnText.text = "Collapse";
+        }
+        else
+        {
+            sMatrix.transform.SetParent(transform, false);
+            operationHolders[0].transform.SetParent(transform, false);
+            rMatrix.transform.SetParent(transform, false);
+            operationHolders[1].transform.SetParent(transform, false);
+
+            expandBtnText.text = "Expand";
+        }
+
+        isExpanded = !isExpanded;
+    }
 }

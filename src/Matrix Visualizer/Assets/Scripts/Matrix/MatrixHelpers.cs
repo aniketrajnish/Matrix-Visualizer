@@ -163,27 +163,12 @@ namespace MatrixLibrary
 
             return MatrixHelpers.Concatenation(new Matrix[] {t, r, s, i});
         }
-        public static Matrix ObjectSpaceTransformationMatrix(float[] ts = null, float[] ss = null, float[] rs = null)
-        {
-            /// <summary>
-            /// Returns the object space transformation matrix for the given translation, scaling and rotation vectors.
-            /// OST = T * R * S * I = T * Rz * Ry * Rx * S * I
-            /// </summary>                   
-            if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
-                throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
-
-            Matrix t = (ts != null) ? MatrixHelpers.translationMatrix(ts) : Matrix.identity(4);
-            Matrix s = (ss != null) ? MatrixHelpers.scalingMatrix(ss) : Matrix.identity(4);
-
-            float angleX = (rs != null) ? rs[0] : 0f;
-            float angleY = (rs != null) ? rs[1] : 0f;
-            float angleZ = (rs != null) ? rs[2] : 0f;
-
-            Matrix r = MatrixHelpers.rotation3Dz(angleZ) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dx(angleX);
-            Matrix i = Matrix.identity(4); // why tho
-
-            return MatrixHelpers.Concatenation(new Matrix[] { t, r, s, i });
-        }
+        /// <summary>
+        /// Returns the object space transformation matrix for the given translation, scaling and rotation vectors.
+        /// Basicaly the redefine of the WorldSpaceTransformationMatrix method but relative for the object space.
+        /// </summary>  
+        public static Matrix ObjectSpaceTransformationMatrix(float[] ts = null, float[] ss = null, float[] rs = null) => WorldSpaceTransformationMatrix(ts, ss, rs);       
+         
         /// <summary>
         /// Returns the camera space matrix based on the camera's world space transformation matrix.
         /// CSM = (WST)⁻¹
