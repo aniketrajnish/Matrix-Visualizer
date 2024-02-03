@@ -308,12 +308,21 @@ namespace MatrixLibrary
                                       
              return MatrixHelpers.OrthographicProjectionMatrix(left, right, bottom, top, near, far) * MatrixHelpers.HomogenizeVector(this);
         }
+        public Matrix ModelViewProjection(Matrix ostMatrix, Matrix wstMatrix, Matrix cvsMatrix, Matrix projectionMatrix)
+        {
+            /// <summary>
+            /// Returns the model view projection of this matrix
+            /// </summary>
+            if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
+                throw new ArgumentException("The original matrix must be 1x4 for model view projection.");
+                                                           
+            return MatrixHelpers.ModelViewProjectionMatrix(ostMatrix, wstMatrix, cvsMatrix, projectionMatrix) * MatrixHelpers.HomogenizeVector(this);
+        }
         public static bool operator ==(Matrix m1, Matrix m2)
         {
             /// <summary>
             /// Overloads the == operator to check if two matrices are equal.
             /// </summary>
-            
             if (ReferenceEquals(m1, m2) || m1 is null && m2 is null)
                 return true;
 

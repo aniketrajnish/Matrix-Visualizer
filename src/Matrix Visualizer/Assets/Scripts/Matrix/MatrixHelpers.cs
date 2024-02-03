@@ -167,7 +167,7 @@ namespace MatrixLibrary
         {
             /// <summary>
             /// Returns the object space transformation matrix for the given translation, scaling and rotation vectors.
-            /// OST = S * R * T * I = S * Rx * Ry * Rz * T * i
+            /// OST = T * R * S * I = T * Rz * Ry * Rx * S * I
             /// </summary>                   
             if (ts != null && ts.Length != 3 || ss != null && ss.Length != 3 || rs != null && rs.Length != 3)
                 throw new ArgumentException("The translation, scaling and rotation vectors must be 3D vectors.");
@@ -182,7 +182,7 @@ namespace MatrixLibrary
             Matrix r = MatrixHelpers.rotation3Dz(angleZ) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dx(angleX);
             Matrix i = Matrix.identity(4); // why tho
 
-            return MatrixHelpers.Concatenation(new Matrix[] {s, r, t, i});
+            return MatrixHelpers.Concatenation(new Matrix[] { t, r, s, i });
         }
         /// <summary>
         /// Returns the camera space matrix based on the camera's world space transformation matrix.
@@ -221,6 +221,19 @@ namespace MatrixLibrary
                              { 0, m2, 0, n2 },
                              { 0, 0, m3, n3 },
                              { 0, 0,  0,  1 } });
+        }
+        public static Matrix ModelViewProjectionMatrix(Matrix ostMatrix, Matrix wstMatrix, Matrix cvsMatrix, Matrix projectionMatrix)
+        {
+            /// <summary>
+            /// Returnts the model view projection matrix.
+            /// </summary>   
+            if (ostMatrix.data.GetLength(0) != 4 || ostMatrix.data.GetLength(1) != 4 || 
+                wstMatrix.data.GetLength(0) != 4 || wstMatrix.data.GetLength(1) != 4 ||
+                cvsMatrix.data.GetLength(0) != 4 || cvsMatrix.data.GetLength(1) != 4 || 
+                projectionMatrix.data.GetLength(0) != 4 || projectionMatrix.data.GetLength(1) != 4)
+                throw new ArgumentException("Invalid matrix dimensions.");
+
+            return projectionMatrix * cvsMatrix * wstMatrix * ostMatrix;
         }
         public static void Pivot(float[,] augmentedMatrix, int i)
         {
