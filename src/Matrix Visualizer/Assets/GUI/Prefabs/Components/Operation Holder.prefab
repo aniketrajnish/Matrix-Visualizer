@@ -134,6 +134,10 @@ PrefabInstance:
       value: Operation Display
       objectReference: {fileID: 0}
     - target: {fileID: 8949137144688853970, guid: 4a09446c607628040b3c708909d77398, type: 3}
+      propertyPath: m_text
+      value: '*'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8949137144688853970, guid: 4a09446c607628040b3c708909d77398, type: 3}
       propertyPath: m_VerticalAlignment
       value: 512
       objectReference: {fileID: 0}
