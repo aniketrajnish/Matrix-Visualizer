@@ -295,7 +295,7 @@ public class CalculationGUI : MonoBehaviour
     }
     void CalculateAndDisplayTranslation() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix);    
     void CalculateAndDisplayScaling() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix);   
-    void CalculateAndDisplayRotation() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix * matrices[2].matrix * matrices[3].matrix);    
+    void CalculateAndDisplayRotation() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix);    
     void CalculateAndDisplayWorldSpaceTransformation() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix);    
     void CalculateAndDisplayObjectSpaceTransformation() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix);    
     void CalculateAndDisplayCameraViewSpaceMatrix() => CalculateAndDisplayOperation(matrices[0].matrix * matrices[1].matrix);
