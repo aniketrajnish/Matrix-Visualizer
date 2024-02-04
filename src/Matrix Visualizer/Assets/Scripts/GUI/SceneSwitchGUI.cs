@@ -14,6 +14,7 @@ public class SceneSwitchGUI : MonoBehaviour
     }
     void SceneSwitchTempMessgae()
     {
-        ErrorGUI.instance.ShowError("Hey Chris! I'll work on the 3D view next week :)", 3f);
+        ErrorGUI.instance.ShowError("Hey Chris! I think I need some time to work on my foundation to develop the 3D viewer! \n " +
+            "I plan on doing it before the Industry Review.", 5f);
     }
 }
