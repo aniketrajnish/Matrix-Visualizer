@@ -1907,7 +1907,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2511035264264513847}
-  - component: {fileID: -6956109537049520982}
   - component: {fileID: 2268676385709471848}
   m_Layer: 0
   m_Name: Object Space Holder
@@ -1943,50 +1942,6 @@ RectTransform:
   m_AnchoredPosition: {x: -1280, y: -720}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &-6956109537049520982
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5330809615511284153}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e677dbf1a025d4840ab570b3624a393a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  expandBtnText: {fileID: 7785740119550939770}
-  sCombInputs:
-  - {fileID: 560117767795272227}
-  - {fileID: 3962805248979843096}
-  - {fileID: 7181957188814356768}
-  rCombInputs:
-  - {fileID: 1962473171946153123}
-  - {fileID: 6786059468220754481}
-  - {fileID: 3917015496916078218}
-  tCombInputs:
-  - {fileID: 7348644415579569916}
-  - {fileID: 539828985055524840}
-  - {fileID: 7215238377635223365}
-  sInputs:
-  - {fileID: 8395723384784741109}
-  - {fileID: 9174123996597788173}
-  - {fileID: 4145943727194951965}
-  rInputs:
-  - {fileID: 2826177727856373438}
-  - {fileID: 3916287595667251767}
-  - {fileID: 1475592532674193419}
-  tInputs:
-  - {fileID: 8603797300857469125}
-  - {fileID: 7860980846339545960}
-  - {fileID: 7770246196675894439}
-  operationHolders:
-  - {fileID: 5693742686980033344}
-  - {fileID: 7133844514391747975}
-  combMatrix: {fileID: 1940069993105000165}
-  sMatrix: {fileID: 3534832115498695358}
-  rMatrix: {fileID: 6085026948017145372}
-  tMatrix: {fileID: 570692941181248797}
 --- !u!114 &2268676385709471848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5111,14 +5066,14 @@ PrefabInstance:
     - target: {fileID: 5165596471727318531, guid: 716925d41b344b9459fb18a41435ffda, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: -6956109537049520982}
+      objectReference: {fileID: 2268676385709471848}
     - target: {fileID: 5165596471727318531, guid: 716925d41b344b9459fb18a41435ffda, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: UpdateVisibility
       objectReference: {fileID: 0}
     - target: {fileID: 5165596471727318531, guid: 716925d41b344b9459fb18a41435ffda, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: WorldSpaceGUI, Assembly-CSharp
+      value: ObjectSpaceGUI, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6248251574834898233, guid: 716925d41b344b9459fb18a41435ffda, type: 3}
       propertyPath: m_Pivot.x

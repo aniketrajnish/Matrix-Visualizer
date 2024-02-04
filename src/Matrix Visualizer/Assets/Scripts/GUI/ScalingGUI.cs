@@ -1,5 +1,4 @@
 using UnityEngine;
-using TMPro;
 using MatrixLibrary;
 
 public class ScalingGUI : MonoBehaviour

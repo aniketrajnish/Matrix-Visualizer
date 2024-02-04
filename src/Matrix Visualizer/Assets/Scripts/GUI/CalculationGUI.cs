@@ -2,10 +2,8 @@
 using TMPro;
 using MatrixLibrary;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine.UI;
 using System.Linq;
-using System.Security.Cryptography;
 
 public class CalculationGUI : MonoBehaviour
 {
