@@ -30,24 +30,24 @@ public class RotationGUI : MonoBehaviour
 
         TMP_InputField[] mInputs = allInputs.Except(rInputs.Concat(rCombInputs)).ToArray();
 
-        foreach (TMPro.TMP_InputField input in mInputs)
+        foreach (TMPro.TMP_InputField input in mInputs) // user can't edit the matrix
             input.interactable = false;
 
         combMGUI = combRotMatrix.GetComponentInChildren<MatrixGUI>();
         mGUIs = rotMatrices.Select(m => m.GetComponentInChildren<MatrixGUI>()).ToArray();
 
-        CreateRotMatrix();
+        CreateRotMatrix(); // init combined rotation matrix
 
-        CreateRotXMatrix();
+        CreateRotXMatrix(); // init x, y, z rotation matrices
         CreateRotYMatrix();
         CreateRotZMatrix();
 
-        UpdateVisibiliy();        
+        UpdateVisibiliy(); // init collapsed matrix       
     }
     void CreateRotMatrix()
     {
         /// <summary>
-        /// Create Rotation Matrix based on the user input.
+        /// Creates Combined Rotation Matrix based on the user input.
         /// </summary>
         try
         {
@@ -63,11 +63,11 @@ public class RotationGUI : MonoBehaviour
 
             combMGUI.matrix = rotMatrix;
 
-            if (WorldSpaceGUI.instance != null)
+            if (WorldSpaceGUI.instance != null) // update the rotation fields of combined world space transformation matrix, if it exists
                 for (int i = 0; i < 3; i++)
                     WorldSpaceGUI.instance.rCombInputs[i].text = (string.IsNullOrEmpty(rCombInputs[i].text) ? 0f : float.Parse(rCombInputs[i].text)).ToString();
 
-            if (ObjectSpaceGUI.instance != null)
+            if (ObjectSpaceGUI.instance != null) // update the rotation fields of combined object space transformation matrix, if it exists
                 for (int i = 0; i < 3; i++)
                     ObjectSpaceGUI.instance.rCombInputs[i].text = (string.IsNullOrEmpty(rCombInputs[i].text) ? 0f : float.Parse(rCombInputs[i].text)).ToString();
         }
@@ -77,7 +77,10 @@ public class RotationGUI : MonoBehaviour
         }
     }
     public void UpdateVisibiliy()
-    {        
+    {     
+        /// <summary>
+        /// Toggles between the expanded and collapsed view of the rotation matrices.
+        /// </summary>
         combRotMatrix.SetActive(!isExpanded);
 
         foreach (var go in rotMatrices.Concat(operationHolders))
@@ -85,7 +88,7 @@ public class RotationGUI : MonoBehaviour
 
         if (isExpanded)
         {
-            rotMatrices[2].transform.SetParent(transform.parent, false);
+            rotMatrices[2].transform.SetParent(transform.parent, false); // in order of multiplication
             rotMatrices[2].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             operationHolders[0].transform.SetParent(transform.parent, false);
             operationHolders[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
@@ -122,10 +125,10 @@ public class RotationGUI : MonoBehaviour
 
             mGUIs[0].matrix = rotXMatrix;
 
-            if (WorldSpaceGUI.instance != null)
+            if (WorldSpaceGUI.instance != null) // update rx of world space transformation matrix, if it exists
                 WorldSpaceGUI.instance.rCombInputs[0].text = xVal.ToString();
 
-            if (ObjectSpaceGUI.instance != null)
+            if (ObjectSpaceGUI.instance != null) // update rx of object space transformation matrix, if it exists
                 ObjectSpaceGUI.instance.rCombInputs[0].text = xVal.ToString();
         }
         catch (System.Exception ex)
@@ -147,10 +150,10 @@ public class RotationGUI : MonoBehaviour
 
             mGUIs[1].matrix = rotYMatrix;
 
-            if (WorldSpaceGUI.instance != null)
+            if (WorldSpaceGUI.instance != null) // update ry of world space transformation matrix, if it exists
                 WorldSpaceGUI.instance.rCombInputs[1].text = yVal.ToString();
 
-            if (ObjectSpaceGUI.instance != null)
+            if (ObjectSpaceGUI.instance != null) // update ry of object space transformation matrix, if it exists
                 ObjectSpaceGUI.instance.rCombInputs[1].text = yVal.ToString();
         }
         catch (System.Exception ex)
@@ -172,10 +175,10 @@ public class RotationGUI : MonoBehaviour
 
             mGUIs[2].matrix = rotZMatrix;
 
-            if (WorldSpaceGUI.instance != null)
+            if (WorldSpaceGUI.instance != null) // update rz of world space transformation matrix, if it exists
                 WorldSpaceGUI.instance.rCombInputs[2].text = zVal.ToString();
 
-            if (ObjectSpaceGUI.instance != null)
+            if (ObjectSpaceGUI.instance != null) // update rz of object space transformation matrix, if it exists
                 ObjectSpaceGUI.instance.rCombInputs[2].text = zVal.ToString();
         }
         catch (System.Exception ex)

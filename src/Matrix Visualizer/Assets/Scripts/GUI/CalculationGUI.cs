@@ -145,37 +145,31 @@ public class CalculationGUI : MonoBehaviour
             ErrorGUI.instance.ShowError(ex.Message, 3f);
         }
     }
-    /// <summary>
-    /// The functions below are used to create the GUI for the respective operations.
-    /// </summary>
+   
     void SimpleOperationsDisplay(string operation)
     {
+        /// <summary>
+        /// To display the GUI for addition and subtraction.
+        /// </summary>
         _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay(operation);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-    }   
-    void AdditionDisplay() => SimpleOperationsDisplay("+");
-    void SubtractionDisplay() => SimpleOperationsDisplay("-");
-    void MatrixMultiplicationDisplay() => SimpleOperationsDisplay("*");
-    void EqualityCheckDisplay() => SimpleOperationsDisplay("");
+    }
     void SingleOperationDisplay(string operation)
     {
+        /// <summary>
+        /// To display the GUI for transpose and inverse.
+        /// </summary>
         _zeroIdentityHolder.SetActive(true);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay(operation);
     }
-    void TransposeDisplay() => SingleOperationDisplay("T");
-    void InverseDisplay() => SingleOperationDisplay("I");
-    void ScalarMultiplicationDisplay()
-    {
-        _zeroIdentityHolder.SetActive(true);
-        _scalarHolder = Instantiate(scalarPrefab, calcGUIParent);
-        CreateOperationDisplay("*");
-        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());        
-    }  
     void TransformationDisplay(GameObject transromationHolder)
     {
+        /// <summary>
+        /// To display the GUI for all the transformation operations.
+        /// </summary>
         glg.cellSize = new Vector2(400, 400); // only 4x1 and 4x4 matrices so we can reduce the cell size
         _zeroIdentityHolder.SetActive(false); // no need for the zero and identity matrices
         matrices.Add(Instantiate(transromationHolder, calcGUIParent).GetComponentInChildren<MatrixGUI>());
@@ -183,6 +177,22 @@ public class CalculationGUI : MonoBehaviour
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         matrices[1].vector = new Matrix(new float[4, 1]);
     }
+    /// <summary>
+    /// The functions below are used to create the GUI for the respective operations.
+    /// </summary>
+    void AdditionDisplay() => SimpleOperationsDisplay("+");
+    void SubtractionDisplay() => SimpleOperationsDisplay("-");
+    void ScalarMultiplicationDisplay()
+    {
+        _zeroIdentityHolder.SetActive(true);
+        _scalarHolder = Instantiate(scalarPrefab, calcGUIParent);
+        CreateOperationDisplay("*");
+        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
+    }
+    void MatrixMultiplicationDisplay() => SimpleOperationsDisplay("*");
+    void EqualityCheckDisplay() => SimpleOperationsDisplay("");    
+    void TransposeDisplay() => SingleOperationDisplay("T");
+    void InverseDisplay() => SingleOperationDisplay("I");          
     void TranslationDisplay() => TransformationDisplay(translationMatrixPrefab);
     void ScalingDisplay() => TransformationDisplay(scalingMatrixPrefab);     
     void RotationDisplay() => TransformationDisplay(rotationMatrixPrefab);
@@ -229,7 +239,7 @@ public class CalculationGUI : MonoBehaviour
         _resultMatrixHolder = null;
         _operationDisplayHolder = null;
 
-        if (RotationGUI.instance != null)
+        if (RotationGUI.instance != null) // assign a new instace to the current rotation, world space and object space GUIs
         {
             RotationGUI.instance.gameObject.SetActive(false);
             Destroy(RotationGUI.instance.gameObject);
@@ -239,24 +249,32 @@ public class CalculationGUI : MonoBehaviour
             WorldSpaceGUI.instance.gameObject.SetActive(false);
             Destroy(WorldSpaceGUI.instance.gameObject);
         }
-    }   
-    /// <summary>
-    /// The functions below are used to calculate the result of the respective operations.
-    /// </summary>
+        if (ObjectSpaceGUI.instance != null)
+        {
+            ObjectSpaceGUI.instance.gameObject.SetActive(false);
+            Destroy(ObjectSpaceGUI.instance.gameObject);
+        }
+    }      
     void CalculateAndDisplayOperation(Matrix result)
     {
-        if (_resultMatrixHolder == null)
+        /// <summary>
+        /// The parent function to calculate the result of the operation and display it.
+        /// </summary>
+        if (_resultMatrixHolder == null) // if the result matrix holder is not created yet, create it and an equals sign
         {
             CreateOperationDisplay("=");
             _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
         }
-        else
+        else // else destroy the previous result matrix and create a new one
         {
             Destroy(_resultMatrixHolder);
             _resultMatrixHolder = Instantiate(matrixPrefab, calcGUIParent);
         }
         _resultMatrixHolder.GetComponentInChildren<MatrixGUI>().matrix = result;
     }
+    /// <summary>
+    /// The functions below are used to calculate the result of the respective operations.
+    /// </summary>
     void CalculateAndDisplayAddition() => CalculateAndDisplayOperation(matrices[0].matrix + matrices[1].matrix);    
     void CalculateAndDisplaySubtraction() => CalculateAndDisplayOperation(matrices[0].matrix - matrices[1].matrix);    
     void CalculateAndScalarMatrixMultiplication()

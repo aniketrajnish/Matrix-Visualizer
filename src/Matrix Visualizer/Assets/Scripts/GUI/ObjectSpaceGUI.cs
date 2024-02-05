@@ -10,21 +10,26 @@ public class ObjectSpaceGUI : MonoBehaviour
     /// </summary>
     public static ObjectSpaceGUI instance;
     [SerializeField] TextMeshProUGUI expandBtnText;
-    private void Awake() => instance = this;
     [SerializeField] public TMP_InputField[] sCombInputs, rCombInputs, tCombInputs, sInputs, rInputs, tInputs;
     [SerializeField] GameObject[] operationHolders;
-    [SerializeField] GameObject combMatrix, sMatrix, rMatrix, tMatrix;
+    [SerializeField] GameObject combMatrix, sMatrix, rMatrix, tMatrix, iMatrix;
     bool isExpanded = false;
+    private void Awake() => instance = this;
     private void Start()
     {
         foreach (var input in sCombInputs.Concat(rCombInputs).Concat(tCombInputs))
             input.onValueChanged.AddListener((string value) => UpdateObjectSpaceMatrix());
 
-        UpdateObjectSpaceMatrix();
-        UpdateVisibility();
+        iMatrix.GetComponentInChildren<MatrixGUI>().matrix = Matrix.identity(4);
+
+        UpdateObjectSpaceMatrix(); // init object space matrix
+        UpdateVisibility(); // init collapsed matrix
     }
     public void UpdateObjectSpaceMatrix()
     {
+        /// <summary>
+        /// Creates and updates all the matrices for the object space transformation (in order: translation, rz, ry, rx, scaling, identity).
+        /// </summary>
         float[] ss = sCombInputs.Select(input => string.IsNullOrEmpty(input.text) ? 1f : float.Parse(input.text)).ToArray();
         float[] rs = rCombInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
         float[] ts = tCombInputs.Select(input => string.IsNullOrEmpty(input.text) ? 0f : float.Parse(input.text)).ToArray();
@@ -41,6 +46,9 @@ public class ObjectSpaceGUI : MonoBehaviour
     }
     public void UpdateVisibility()
     {
+        /// <summary>
+        /// Toggles between the expanded and collapsed view of the object space transformation matrices.
+        /// </summary>
         combMatrix.SetActive(!isExpanded);
 
         foreach (GameObject go in operationHolders)
@@ -49,10 +57,15 @@ public class ObjectSpaceGUI : MonoBehaviour
         sMatrix.SetActive(isExpanded);
         rMatrix.SetActive(isExpanded);
         tMatrix.SetActive(isExpanded);
+        iMatrix.SetActive(isExpanded);
 
         if (isExpanded)
         {
-            sMatrix.transform.SetParent(transform.parent, false);
+            iMatrix.transform.SetParent(transform.parent, false); // in oreder of multiplication
+            iMatrix.transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            operationHolders[2].transform.SetParent(transform.parent, false);
+            operationHolders[2].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            sMatrix.transform.SetParent(transform.parent, false); 
             sMatrix.transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             operationHolders[0].transform.SetParent(transform.parent, false);
             operationHolders[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
@@ -65,6 +78,8 @@ public class ObjectSpaceGUI : MonoBehaviour
         }
         else
         {
+            iMatrix.transform.SetParent(transform, false);
+            operationHolders[2].transform.SetParent(transform, false);
             sMatrix.transform.SetParent(transform, false);
             operationHolders[0].transform.SetParent(transform, false);
             rMatrix.transform.SetParent(transform, false);

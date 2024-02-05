@@ -34,11 +34,11 @@ public class ScalingGUI : MonoBehaviour
         Matrix scalingMatrix = MatrixHelpers.scalingMatrix(new float[] { xVal, yVal, zVal });
         mGUI.matrix = scalingMatrix;
 
-        if (WorldSpaceGUI.instance != null)
+        if (WorldSpaceGUI.instance != null) // update the scale fields of combined world space transformation matrix, if it exists
             for (int i = 0; i < 3; i++)
                 WorldSpaceGUI.instance.sCombInputs[i].text = (string.IsNullOrEmpty(sInputs[i].text) ? 1f : float.Parse(sInputs[i].text)).ToString();
 
-        if (ObjectSpaceGUI.instance != null)
+        if (ObjectSpaceGUI.instance != null) // update the scale fields of combined object space transformation matrix, if it exists
             for (int i = 0; i < 3; i++)
                 ObjectSpaceGUI.instance.sCombInputs[i].text = (string.IsNullOrEmpty(sInputs[i].text) ? 1f : float.Parse(sInputs[i].text)).ToString();
     }

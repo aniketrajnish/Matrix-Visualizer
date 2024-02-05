@@ -34,11 +34,11 @@ public class TranslationGUI : MonoBehaviour
         Matrix translationMatrix = MatrixHelpers.translationMatrix(new float[] { xVal, yVal, zVal });
         mGUI.matrix = translationMatrix;
 
-        if (WorldSpaceGUI.instance != null)        
+        if (WorldSpaceGUI.instance != null) // update the translation fields of combined world space transformation matrix, if it exists       
             for (int i = 0; i < 3; i++)
                 WorldSpaceGUI.instance.tCombInputs[i].text = (string.IsNullOrEmpty(tInputs[i].text) ? 0f : float.Parse(tInputs[i].text)).ToString();
 
-        if (ObjectSpaceGUI.instance != null)
+        if (ObjectSpaceGUI.instance != null) // update the translation fields of combined object space transformation matrix, if it exists
             for (int i = 0; i < 3; i++)
                 ObjectSpaceGUI.instance.tCombInputs[i].text = (string.IsNullOrEmpty(tInputs[i].text) ? 0f : float.Parse(tInputs[i].text)).ToString();
     }
