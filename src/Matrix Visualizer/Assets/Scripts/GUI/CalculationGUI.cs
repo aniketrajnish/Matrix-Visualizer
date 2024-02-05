@@ -174,7 +174,7 @@ public class CalculationGUI : MonoBehaviour
         CreateOperationDisplay("*");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());        
     }  
-    void SimpleTransformationDisplay(GameObject transromationHolder)
+    void TransformationDisplay(GameObject transromationHolder)
     {
         glg.cellSize = new Vector2(400, 400); // only 4x1 and 4x4 matrices so we can reduce the cell size
         _zeroIdentityHolder.SetActive(false); // no need for the zero and identity matrices
@@ -183,40 +183,27 @@ public class CalculationGUI : MonoBehaviour
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         matrices[1].vector = new Matrix(new float[4, 1]);
     }
-    void TranslationDisplay() => SimpleTransformationDisplay(translationMatrixPrefab);
-    void ScalingDisplay() => SimpleTransformationDisplay(scalingMatrixPrefab);
-    void ComplexTransformationDisplay(GameObject transformationHolder)
-    {
-        glg.cellSize = new Vector2(400, 400);
-        _zeroIdentityHolder.SetActive(false);
-        Instantiate(transformationHolder, calcGUIParent);
-        CreateOperationDisplay("*");
-        matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
-        matrices[0].vector = new Matrix(new float[4, 1]);
-        matrices.Clear();
-        matrices = GetComponentsInChildren<MatrixGUI>().ToList(); // since more than one matrix in the prefab
-    } 
-    void RotationDisplay() => SimpleTransformationDisplay(rotationMatrixPrefab);
-    void WorldSpaceTransformationDisplay() => SimpleTransformationDisplay(wstMatrixPrefab);
-    void ObjectSpaceTransformationDisplay() => SimpleTransformationDisplay(ostMatrixPrefab);
-    void CameraViewSpaceDisplay() => SimpleTransformationDisplay(cvsMatrixPrefab);
-    void ProjectionDisplay() => SimpleTransformationDisplay(projectionMatrixPrefab);
+    void TranslationDisplay() => TransformationDisplay(translationMatrixPrefab);
+    void ScalingDisplay() => TransformationDisplay(scalingMatrixPrefab);     
+    void RotationDisplay() => TransformationDisplay(rotationMatrixPrefab);
+    void WorldSpaceTransformationDisplay() => TransformationDisplay(wstMatrixPrefab);
+    void ObjectSpaceTransformationDisplay() => TransformationDisplay(ostMatrixPrefab);
+    void CameraViewSpaceDisplay() => TransformationDisplay(cvsMatrixPrefab);
+    void ProjectionDisplay() => TransformationDisplay(projectionMatrixPrefab);
     void ModelViewProjectionDisplay()
     {
         glg.cellSize = new Vector2(500, 500);
         _zeroIdentityHolder.SetActive(false);
-        Instantiate(projectionMatrixPrefab, calcGUIParent);
+        matrices.Add(Instantiate(projectionMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
-        Instantiate(cvsMatrixPrefab, calcGUIParent);
+        matrices.Add(Instantiate(cvsMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
-        Instantiate(wstMatrixPrefab, calcGUIParent);
+        matrices.Add(Instantiate(wstMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
-        Instantiate(ostMatrixPrefab, calcGUIParent);
+        matrices.Add(Instantiate(ostMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         matrices[matrices.Count - 1].vector = new Matrix(new float[4, 1]);
-        matrices.Clear();
-        matrices = GetComponentsInChildren<MatrixGUI>().ToList();
     }
     void CreateOperationDisplay(string operation)
     {

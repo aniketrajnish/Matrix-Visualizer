@@ -136,7 +136,7 @@ namespace MatrixLibrary
         /// Creates a 3D rotation matrix for x , y and z axes.
         /// </summary>        
         public static Matrix rotation3D(float? angleX = null, float? angleY = null, float? angleZ = null) 
-        => rotation3Dx(angleX ?? 0) * rotation3Dy(angleY ?? 0) * rotation3Dz(angleZ ?? 0);
+        => rotation3Dz(angleZ ?? 0) * rotation3Dy(angleY ?? 0) * rotation3Dx(angleX ?? 0);
         /// <summary>
         /// Method to concatenate matrices by multiplying them.
         /// </summary>
@@ -158,7 +158,7 @@ namespace MatrixLibrary
             float angleY = (rs != null) ? rs[1] : 0f;
             float angleZ = (rs != null) ? rs[2] : 0f;
 
-            Matrix r = MatrixHelpers.rotation3Dx(angleX) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dz(angleZ);
+            Matrix r = MatrixHelpers.rotation3Dz(angleZ) * MatrixHelpers.rotation3Dy(angleY) * MatrixHelpers.rotation3Dx(angleX);
             Matrix i = Matrix.identity(4); // why tho
 
             return MatrixHelpers.Concatenation(new Matrix[] {t, r, s, i});

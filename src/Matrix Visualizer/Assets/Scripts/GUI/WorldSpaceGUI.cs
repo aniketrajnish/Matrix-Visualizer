@@ -31,7 +31,6 @@ public class WorldSpaceGUI : MonoBehaviour
 
         for (int i = 0; i < 3; i++)
         {
-            print(ss[i]);
             sInputs[i].text = ss[i].ToString();
             rInputs[i].text = rs[i].ToString();
             tInputs[i].text = ts[i].ToString();

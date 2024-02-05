@@ -256,7 +256,7 @@ namespace MatrixLibrary
         {
             /// <summary>
             /// Returns the world space transformation of this matrix
-            /// P = T * Rx * Ry * Rz * S * I * p
+            /// P = T * Rz * Ry * Rx * S * I * p
             /// Performs post-multiplication of the given matrix with the given translation, scaling and rotation vectors.
             /// </summary>
             if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
@@ -268,7 +268,7 @@ namespace MatrixLibrary
         {
             /// <summary>
             /// Returns the object space transformation of this matrix
-            /// P = S * Rx * Ry * Rz * T * I * p
+            /// P = S * Rz * Ry * Rx * T * I * p
             /// Performs post-multiplication of the given matrix with the given translation, scaling and rotation vectors.
             if (data.GetLength(0) != 3 || data.GetLength(1) != 1)
                 throw new ArgumentException("The original matrix must be 1x4 for object space transformation.");
