@@ -3,7 +3,6 @@ using TMPro;
 using MatrixLibrary;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System.Linq;
 
 public class CalculationGUI : MonoBehaviour
 {
@@ -32,7 +31,7 @@ public class CalculationGUI : MonoBehaviour
         /// <summary>
         /// Creates the GUI based on the operation selected.
         /// </summary>
-        ClearDisplay(); // clearing the current GUI and its references
+        ResetDisplay(); // clearing the current GUI and its references
 
         switch (opGUI.currentOp)
         {
@@ -152,6 +151,7 @@ public class CalculationGUI : MonoBehaviour
         /// To display the GUI for addition and subtraction.
         /// </summary>
         _zeroIdentityHolder.SetActive(true);
+        glg.transform.localPosition = new Vector3(-740, 0, 0); 
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay(operation);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
@@ -162,6 +162,7 @@ public class CalculationGUI : MonoBehaviour
         /// To display the GUI for transpose and inverse.
         /// </summary>
         _zeroIdentityHolder.SetActive(true);
+        glg.transform.localPosition = new Vector3(-440, 0, 0);
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay(operation);
     }
@@ -171,6 +172,7 @@ public class CalculationGUI : MonoBehaviour
         /// To display the GUI for all the transformation operations.
         /// </summary>
         glg.cellSize = new Vector2(400, 400); // only 4x1 and 4x4 matrices so we can reduce the cell size
+        glg.transform.localPosition = new Vector3(-540, 0, 0);
         _zeroIdentityHolder.SetActive(false); // no need for the zero and identity matrices
         matrices.Add(Instantiate(transromationHolder, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
@@ -185,6 +187,7 @@ public class CalculationGUI : MonoBehaviour
     void ScalarMultiplicationDisplay()
     {
         _zeroIdentityHolder.SetActive(true);
+        glg.transform.localPosition = new Vector3(-740, 0, 0);
         _scalarHolder = Instantiate(scalarPrefab, calcGUIParent);
         CreateOperationDisplay("*");
         matrices.Add(Instantiate(matrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
@@ -203,6 +206,7 @@ public class CalculationGUI : MonoBehaviour
     void ModelViewProjectionDisplay()
     {
         glg.cellSize = new Vector2(500, 500);
+        glg.transform.localPosition = new Vector3(-760, 0, 0);
         _zeroIdentityHolder.SetActive(false);
         matrices.Add(Instantiate(projectionMatrixPrefab, calcGUIParent).GetComponentInChildren<MatrixGUI>());
         CreateOperationDisplay("*");
@@ -224,7 +228,7 @@ public class CalculationGUI : MonoBehaviour
         TextMeshProUGUI operationDisplayText = _operationDisplayHolder.GetComponentInChildren<TextMeshProUGUI>();
         operationDisplayText.text = operation;
     }    
-    void ClearDisplay()
+    void ResetDisplay()
     {
         /// <summary>
         /// Clears the current GUI and its references.
