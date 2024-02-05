@@ -88,8 +88,8 @@ public class RotationGUI : MonoBehaviour
 
         if (isExpanded)
         {
-            rotMatrices[2].transform.SetParent(transform.parent, false); // in order of multiplication
-            rotMatrices[2].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
+            rotMatrices[0].transform.SetParent(transform.parent, false); // in order of multiplication
+            rotMatrices[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             operationHolders[0].transform.SetParent(transform.parent, false);
             operationHolders[0].transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             rotMatrices[1].transform.SetParent(transform.parent, false);
@@ -101,8 +101,8 @@ public class RotationGUI : MonoBehaviour
         }
         else
         {
+            rotMatrices[0].transform.SetParent(transform, false);
             rotMatrices[1].transform.SetParent(transform, false);
-            rotMatrices[2].transform.SetParent(transform, false);
             operationHolders[0].transform.SetParent(transform, false);
             operationHolders[1].transform.SetParent(transform, false);
 
